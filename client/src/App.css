@@ -1,0 +1,19 @@
+/* .scroll-container {
+    display: flex;
+    white-space: nowrap; /* Garde tous les éléments sur une seule ligne */
+}
+
+.scrollh {
+    display: inline-block;
+    animation: swipe 4000ms linear infinite alternate;
+}
+
+@keyframes swipe {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+} 
+*/
