@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+import Navbar from "./Navbar";
 
 function Sortie() {
   return (
-    <div>Sortie</div>
-  )
+    <>
+      <Navbar />
+      <div>Sortie</div>
+    </>
+  );
 }
 
 export default Sortie;

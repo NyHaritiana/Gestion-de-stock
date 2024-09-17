@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+import Navbar from "./Navbar";
 
 function Entree() {
   return (
-    <div>Entree</div>
-  )
+    <>
+      <Navbar />
+      <div>Entree</div>
+    </>
+  );
 }
 
 export default Entree;

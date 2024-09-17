@@ -1,35 +1,87 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar";
 import "../App.css";
-import materiel from "../assets/materiel.jpg";
+import materiel from "../assets/materiels.jpg";
+import fourniture from "../assets/fournitures.jpg";
+import materiels from "../assets/materiel.jpg";
+import equipements from "../assets/equipements.jpg";
 
 function Home() {
   const [datatitle, setDatatitle] = useState([
-    { id: 1, libelle: "Matériels" },
-    { id: 2, libelle: "Clés" },
-    { id: 3, libelle: "Accessoires" },
-    { id: 4, libelle: "Équipements" },
-    { id: 5, libelle: "Fournitures" },
+    { idTitle: 1, libelles: "Tous" },
+    { idTitle: 2, libelles: "Matériels" },
+    { idTitle: 3, libelles: "Fournitures" },
+    { idTitle: 4, libelles: "Accessoires" },
+    { idTitle: 5, libelles: "Équipements" },
   ]);
-  const [datafirstarticle, setDataarticle] = useState([
-    { id: 1, title: "Matériels", image: {materiel} },
-    { id: 2, title: "Clés", image: {materiel} },
-    { id: 3, title: "Accessoires", image: {materiel} },
-    { id: 1, title: "Équipements", image: {materiel} },
+  const [dataarticle, setDataarticle] = useState([
+    {
+      idArticle: 1,
+      title: "Matériels",
+      images: materiel,
+      listes: (
+        <ul className="list-disc ml-5">
+          <li>Moniteur</li>
+          <li>Clavier, souris, disque dur</li>
+          <li>...</li>
+        </ul>
+      ),
+    },
+    {
+      idArticle: 2,
+      title: "Fournitures",
+      images: fourniture,
+      listes: (
+        <ul className="list-disc ml-5">
+          <li>Stylos, crayon, marqueurs</li>
+          <li>Ciseaux, blocs-notes</li>
+          <li>...</li>
+        </ul>
+      ),
+    },
+    {
+      idArticle: 3,
+      title: "Accessoires",
+      images: materiels,
+      listes: (
+        <ul className="list-disc ml-5">
+          <li>Mug</li>
+          <li>Chaises, tales</li>
+          <li>...</li>
+        </ul>
+      ),
+    },
+    {
+      idArticle: 4,
+      title: "Équipements",
+      images: equipements,
+      listes: (
+        <ul className="list-disc ml-5">
+          <li>Projecteur</li>
+          <li>Cables, chargeur</li>
+          <li>...</li>
+        </ul>
+      ),
+    },
   ]);
-  const [datasecondarticle, setDatasecondarticle] = useState([
-    { id: 1, title: "Équipements" },
-    { id: 2, title: "Fournitures" },
-    { id: 3, title: "Autres" },
-  ]);
-  const [datahead, setDatahead] = useState([
-    { id: 1, libelle: "Designation" },
-    { id: 2, libelle: "Catégorie" },
-    { id: 3, libelle: "Quatité" },
-    { id: 4, libelle: "Unité" },
-    { id: 5, libelle: "N° Comptable" },
-    { id: 6, libelle: "Ref. Facture" },
-  ]);
+  //const [datatablehead, setDatahead] = useState([
+  //{ idTablehead: 1, libelle: "Designation" },
+  //{ idTablehead: 2, libelle: "Catégorie" },
+  //{ idTablehead: 3, libelle: "Quatité" },
+  //{ idTablehead: 4, libelle: "Unité" },
+  //{ idTablehead: 5, libelle: "N° Comptable" },
+  //{ idTablehead: 6, libelle: "Ref. Facture" },
+  //]);
+
+  const [selectedArticle, setSelectedArticle] = useState(null);
+
+  const handleTitleClick = (idTitle) => {
+    setSelectedArticle(idTitle);
+  };
+
+  const handleResetClick = () => {
+    setSelectedArticle(null);
+  };
   return (
     <>
       {/* ---------navbar------------ */}
@@ -56,10 +108,13 @@ function Home() {
               {datatitle.map((item) => (
                 <a
                   href="#"
-                  className="scrollh hover:bg-gray-400 rounded py-2 px-4 mx-2"
-                  key={item.id}
+                  onClick={() => handleTitleClick(item.idTitle)}
+                  className={`scrollh hover:bg-gray-400 rounded py-2 px-4 mx-2 ${
+                    selectedArticle === item.idTitle ? "bg-gray-400" : ""
+                  }`}
+                  key={item.idTitle}
                 >
-                  {item.libelle}
+                  {item.libelles}
                 </a>
               ))}
             </div>
@@ -67,74 +122,62 @@ function Home() {
         </div>
       </nav>
 
-      <div className="container mx-auto flex flex-wrap py-6">
-        {datafirstarticle.map((item) => (
-          <section className="w-full mx-auto md:w-2/5 px-3">
-            <article className="flex flex-col shadow my-4" key={item.id}>
-              <a href="#" className="hover:opacity-75"></a>
-              <div className="bg-white flex flex-col justify-start p-6">
-                <img src={item.image} alt={item.title} />
-                <a
-                  href="#"
-                  className="text-blue-700 text-sm text-center font-bold uppercase pb-4"
+      <div className="container mx-auto py-6">
+        <section className="w-full mx-auto px-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {dataarticle
+              .filter((items) => items.idArticle === selectedArticle)
+              .map((items) => (
+                <article
+                  className="flex flex-col shadow my-4 transform transition-transform duration-1000 hover:scale-105"
+                  key={items.idArticle}
                 >
-                  {item.title}
-                </a>
-                {/* <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-700">
-                  <thead className="bg-gray-100 dark:bg-gray-700">
-                    <tr>
-                      {datahead.map((item) => (
-                        <th
-                          scope="col"
-                          className="py-3 px-6 text-xs font-medium tracking-wider text-center text-gray-700 uppercase dark:text-gray-400"
-                          key={item.id}
-                        >
-                          {item.libelle}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                </table> */}
-              </div>
-            </article>
-          </section>
-        ))}
+                  <a href="#" className="hover:opacity-75"></a>
+                  <div className="bg-white flex flex-col justify-start p-6">
+                    <a
+                      href="#"
+                      className="text-blue-700 text-sm text-center font-bold uppercase pb-4"
+                    >
+                      {items.title}
+                    </a>
+                    <img
+                      src={items.images}
+                      alt={items.title}
+                      className="mb-4 w-full h-96 object-cover rounded-lg"
+                    />
+                    <div>{items.listes}</div>
+                    <div class="mt-1 flex items-center gap-x-6">
+                      <a
+                        href="#"
+                        class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        En savoir plus <span aria-hidden="true">→</span>
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              ))}
+          </div>
+        </section>
       </div>
 
-      <footer class="w-full border-t bg-white pb-12">
-        <div
-          class="relative w-full flex items-center invisible md:visible md:pb-12"
-          x-data="getCarouselData()"
-        >
-          <button
-            class="absolute bg-blue-800 hover:bg-blue-700 text-white text-2xl font-bold hover:shadow rounded-full w-16 h-16 ml-12"
-            x-on:click="decrement()"
-          >
-            &#8592;
-          </button>
-          <button
-            class="absolute right-0 bg-blue-800 hover:bg-blue-700 text-white text-2xl font-bold hover:shadow rounded-full w-16 h-16 mr-12"
-            x-on:click="increment()"
-          >
-            &#8594;
-          </button>
-        </div>
-        <div class="w-full container mx-auto flex flex-col items-center">
-          <div class="flex flex-col md:flex-row text-center md:text-left md:justify-between py-6">
-            <a href="#" class="uppercase px-3">
+      <footer className="w-full border-t bg-white pb-12">
+        <div className="w-full container mx-auto flex flex-col items-center">
+          <div className="flex flex-col md:flex-row text-center md:text-left md:justify-between py-6">
+            <a href="#" className="uppercase px-3">
               About Us
             </a>
-            <a href="#" class="uppercase px-3">
+            <a href="#" className="uppercase px-3">
               Privacy Policy
             </a>
-            <a href="#" class="uppercase px-3">
+            <a href="#" className="uppercase px-3">
               Terms & Conditions
             </a>
-            <a href="#" class="uppercase px-3">
+            <a href="#" className="uppercase px-3">
               Contact Us
             </a>
           </div>
-          <div class="uppercase pb-6">&copy; myblog.com</div>
+          <div className="uppercase pb-6">&copy; myblog.com</div>
         </div>
       </footer>
     </>
