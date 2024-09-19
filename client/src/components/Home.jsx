@@ -5,8 +5,16 @@ import materiel from "../assets/materiels.jpg";
 import fourniture from "../assets/fournitures.jpg";
 import materiels from "../assets/materiel.jpg";
 import equipements from "../assets/equipements.jpg";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+
+  const navigate = useNavigate();
+
+  const clickNav = () => {
+    navigate('/Entree');
+  };
+
   const [datatitle, setDatatitle] = useState([
     { idTitle: 1, libelles: "Tous" },
     { idTitle: 2, libelles: "Matériels" },
@@ -66,11 +74,12 @@ function Home() {
   ]);
   const [datatablehead, setDatahead] = useState([
     { idTablehead: 1, libelle: "Designation" },
-    { idTablehead: 2, libelle: "Catégorie" },
-    { idTablehead: 3, libelle: "Quatité" },
+    { idTablehead: 2, libelle: "Description" },
+    { idTablehead: 3, libelle: "Quantité" },
     { idTablehead: 4, libelle: "Unité" },
     { idTablehead: 5, libelle: "N° Comptable" },
     { idTablehead: 6, libelle: "Ref. Facture" },
+    { idTablehead: 7, libelle: "Date" },
   ]);
 
   const [selectedArticle, setSelectedArticle] = useState(1);
@@ -174,14 +183,14 @@ function Home() {
           </div>
           {modal && (
             <div
-              class="relative z-10"
+              className="relative z-10"
               aria-labelledby="modal-title"
               role="dialog"
               aria-modal="true"
               onClick={toogleModal}
             >
               <div
-                class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
                 aria-hidden="true"
               ></div>
               <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -195,7 +204,7 @@ function Home() {
                               {datatablehead.map((item) => (
                                 <th
                                   scope="col"
-                                  className="py-3 px-6 text-xs font-medium tracking-wider text-center text-gray-700 uppercase dark:text-gray-400"
+                                  className="py-3 px-4 text-xs font-medium tracking-wider text-center text-gray-700 uppercase dark:text-gray-400"
                                   key={item.idTablehead}
                                 >
                                   {item.libelle}
@@ -209,6 +218,7 @@ function Home() {
                     <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                       <button
                         type="button"
+                        onClick={clickNav}
                         class="inline-flex w-full justify-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 sm:ml-3 sm:w-auto"
                       >
                         nouveau
