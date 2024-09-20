@@ -15,7 +15,7 @@ function Entree() {
 
       {/* -----------title----------- */}
       <header className="w-full container mx-auto">
-        <div className="flex flex-col items-center py-12">
+        <div className="flex flex-col items-center py-20">
           <a
             className="font-bold text-gray-800 uppercase hover:text-gray-700 text-5xl"
             href="#"
@@ -82,22 +82,22 @@ function Entree() {
                     </div>
                   </div>
 
-                  <div class="sm:col-span-4">
+                  <div className="sm:col-span-4">
                     <label
                       htmlFor="about"
-                      class="block text-sm font-medium leading-6 text-gray-900"
+                      className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Description
                     </label>
-                    <div class="mt-2">
+                    <div className="mt-2">
                       <textarea
                         id="about"
                         name="about"
                         rows="3"
-                        class="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       ></textarea>
                     </div>
-                    <p class="mt-3 text-sm leading-6 text-gray-600">
+                    <p className="mt-3 text-sm leading-6 text-gray-600">
                       Décrire l' objet en fonction de sa forme, de sa couleur,
                       de sa marque, etc
                     </p>

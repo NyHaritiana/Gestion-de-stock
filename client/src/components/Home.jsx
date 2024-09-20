@@ -100,15 +100,15 @@ function Home() {
       <Navbar />
 
       {/* -----------title----------- */}
-      <header className="w-full container mx-auto">
-        <div className="flex flex-col items-center py-12">
+      <header className="w-full header-background">
+        <div className="max-w-7xl mx-auto flex flex-col items-center py-20">
           <a
-            className="font-bold text-gray-800 uppercase hover:text-gray-700 text-5xl"
+            className="font-bold text-gray-100 uppercase hover:text-gray-400 text-5xl"
             href="#"
           >
             Gestion de Stock
           </a>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-200">
             Direction du Système d' Information
           </p>
         </div>
@@ -168,10 +168,10 @@ function Home() {
                       className="mb-4 w-full h-96 object-cover rounded-lg"
                     />
                     <div>{items.listes}</div>
-                    <div class="mt-1 flex items-center gap-x-6">
+                    <div className="mt-1 flex items-center gap-x-6">
                       <a
                         href="#"
-                        class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={toogleModal}
                       >
                         En savoir plus <span aria-hidden="true">→</span>
@@ -215,17 +215,17 @@ function Home() {
                         </table>
                       </div>
                     </div>
-                    <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                       <button
                         type="button"
                         onClick={clickNav}
-                        class="inline-flex w-full justify-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 sm:ml-3 sm:w-auto"
+                        className="inline-flex w-full justify-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 sm:ml-3 sm:w-auto"
                       >
                         nouveau
                       </button>
                       <button
                         type="button"
-                        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                        className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                         onClick={toogleModal}
                       >
                         retour
@@ -255,7 +255,7 @@ function Home() {
               Contact Us
             </a>
           </div>
-          <div className="uppercase pb-6">&copy; myblog.com</div>
+          <div className="uppercase pb-6">&copy; 2024 G-STOCK | MFA - DSI</div>
         </div>
       </footer>
     </>
