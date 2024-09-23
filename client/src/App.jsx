@@ -6,6 +6,10 @@ import Sortie from "./components/Sortie";
 
 const router = createBrowserRouter([
   {
+    path: "/admin/login",
+    element: <Login />,
+  },
+  {
     path: "/",
     element: <Home />,
   },
