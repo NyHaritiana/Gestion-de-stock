@@ -1,72 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../services/authApi.js";
 
 function Login() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setFormData({ ...formData, [name]: value });
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      console.log('Form Data:', formData);
-      setFormData({ email: '', password: '' });
-      try {
-        const response = await auth(formData);
-        if (response.status === 200) {
-            const { token } = response.data;
-            localStorage.setItem('authToken', token);
-            navigate("/");
-        }
-      } catch (error) {
-        console.error('Authentication failed:', error);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Form Data:", formData);
+    setFormData({ email: "", password: "" });
+    try {
+      const response = await auth(formData);
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem("authToken", token);
+        navigate("/");
       }
-    };
-  
-    return (
-    <div className="leading-normal tracking-normal text-white gradient min-h-screen flex flex-col">
-      <nav id="header" className="fixed w-full z-30 top-0 text-white gradient">
-        <div className="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 py-2">
-          <div className="pl-4 flex items-center">
-            <a
-              className="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
-              href="#"
-            >
-              <img
-                id="rectangle"
-                src={logo}
-                className="fill-current inline w-10 pb-2 mr-2"
-              />
-              RAIL'S MADA
-            </a>
-          </div>
-          <div className="block lg:hidden pr-4">
-            <button
-              id="nav-toggle"
-              className="flex items-center p-1 text-pink-800 hover:text-gray-900 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-            >
-              <svg
-                className="fill-current h-6 w-6"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Menu</title>
-                <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <hr className="border-b opacity-25 my-0 py-0" />
-      </nav>
+    } catch (error) {
+      console.error("Authentication failed:", error);
+    }
+  };
+
+  return (
+    <>
       <form
         method="POST"
         action="#"
         onSubmit={handleSubmit}
-        className="flex justify-center flex-grow items-center"
+        className="flex justify-center min-h-screen flex flex-col items-center h-full"
       >
         <div className="px-10 py-10 rounded-xl w-screen max-w-sm bg-gray-800">
           <div className="space-y-7">
@@ -93,6 +61,7 @@ function Login() {
                 type="email"
                 name="email"
                 placeholder="Email"
+                autoComplete="username"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -116,6 +85,7 @@ function Login() {
                 type="password"
                 name="password"
                 placeholder="Mot de passe"
+                autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}
                 required
@@ -130,14 +100,14 @@ function Login() {
           <div className="flex justify-center mt-4">
             <button
               type="submit"
-              className="mx-4 mt-6 neoni hover:neonih h-10 w-40 rounded-md bg-[#debb3b] font-light text-white text-lg tracking-wide transition duration-1000"
+              className="mx-4 mt-6 h-10 w-40 shadow rounded-md bg-gray-700 hover:bg-gray-800 font-light text-white text-lg tracking-wide transition duration-1000"
             >
               Connexion
             </button>
           </div>
         </div>
       </form>
-    </div>
+    </>
   );
 }
 
