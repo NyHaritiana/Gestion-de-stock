@@ -27,18 +27,6 @@ const router = createBrowserRouter([
 ]);
 function App() {
 
-  const getUser = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/user");
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching users", error);
-    }
-  }
-  useEffect(() => {
-    getUser()
-  },[]);
-
   return (
     <>
       <RouterProvider router={router} />

@@ -3,7 +3,7 @@ import axios from "axios";
 export async function auth(formData) {
     try {
       let data = JSON.stringify(formData);
-      const response = await axios.post(`http://localhost:5193/api/auth/login`, data, {
+      const response = await axios.post(`http://localhost:3000/api/auth/login`, data, {
         headers: {
           "Content-Type": "application/json",
         },

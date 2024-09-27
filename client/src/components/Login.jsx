@@ -6,6 +6,8 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,17 +16,22 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     console.log("Form Data:", formData);
     setFormData({ email: "", password: "" });
     try {
-      const response = await auth(formData);
+      const response = await auth({ username: formData.email, password: formData.password });
       if (response.status === 200) {
         const { token } = response.data;
         localStorage.setItem("authToken", token);
         navigate("/");
       }
     } catch (error) {
+      setError("Échec de l'authentification.")
       console.error("Authentication failed:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,7 +64,7 @@ function Login() {
                 />
               </svg>
               <input
-                className="bg-transparent pl-2 outline-none border-none w-full"
+                className="bg-transparent pl-2 outline-none border-none w-full text-white"
                 type="email"
                 name="email"
                 placeholder="Email"
@@ -81,7 +88,7 @@ function Login() {
                 />
               </svg>
               <input
-                className="bg-transparent pl-2 outline-none border-none w-full"
+                className="bg-transparent pl-2 outline-none border-none w-full text-white"
                 type="password"
                 name="password"
                 placeholder="Mot de passe"
@@ -101,8 +108,9 @@ function Login() {
             <button
               type="submit"
               className="mx-4 mt-6 h-10 w-40 shadow rounded-md bg-gray-700 hover:bg-gray-800 font-light text-white text-lg tracking-wide transition duration-1000"
+              disabled={loading}
             >
-              Connexion
+              {loading ? "Connexion..." : "Connexion"}
             </button>
           </div>
         </div>

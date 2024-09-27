@@ -1,19 +1,21 @@
-import express from "express"
-import users from "./user.js"
-import cors from "cors"
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const dotenv =require('dotenv');
+const auth  = require("./routes/auth.js");
 
-const app = express()
-const port = 3000
+dotenv.config();
+const app = express();
+const port = 3000;
 
-app.use(cors());
-
-app.get('/', (req, res) => {
-  res.send('Server is ready')
-})
-
-app.get("/user", (req, res) => {
-  res.send(users);
-})
+const corsOption = {
+  origin: 'http://localhost:5173',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOption));
+app.use(bodyParser.json());
+app.use(express.json());
+app.use('/api/auth', auth);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
