@@ -1,4 +1,4 @@
-import QRCode from 'qrcode';
+const QRCode = require('qrcode');
 
 let data = {
     "name": "hart",

@@ -4,16 +4,14 @@ import Entree from "./components/Entree";
 import Home from "./components/Home";
 import Sortie from "./components/Sortie";
 import Login from "./components/Login";
-import { useEffect } from "react";
-import axios from "axios";
 
 const router = createBrowserRouter([
   {
-    path: "/login",
+    path: "/",
     element: <Login />,
   },
   {
-    path: "/",
+    path: "/home",
     element: <Home />,
   },
   {

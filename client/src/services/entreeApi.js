@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5193/api/";
+const API_BASE_URL = "http://localhost:3000/api/entrees/";
 const TOKEN = localStorage.getItem("authToken");
 
 export const getEntree = async () => {
@@ -9,7 +9,7 @@ export const getEntree = async () => {
   }
 
   try {
-    const response = await axios.get(`${API_BASE_URL}entrees`, {
+    const response = await axios.get(`${API_BASE_URL}getEntree`, {
       headers: {
         "Authorization": `Bearer ${TOKEN}`,
       },
@@ -30,7 +30,7 @@ export const createEntree = async (entreesData) => {
 
   try {
     let data = JSON.stringify(entreesData);
-    const response = await axios.post(`${API_BASE_URL}entrees`, data, {
+    const response = await axios.post(`${API_BASE_URL}addEntree`, data, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${TOKEN}`,
@@ -44,7 +44,7 @@ export const createEntree = async (entreesData) => {
   }
 };
 
-export const editEntee = async (codeEntree, entreesData) => {
+export const editEntee = async (id_entree, entreesData) => {
   if (!TOKEN) {
     throw new Error("No token found");
   }
@@ -52,7 +52,7 @@ export const editEntee = async (codeEntree, entreesData) => {
   try {
     let data = JSON.stringify(entreesData);
     const response = await axios.put(
-      `${API_BASE_URL}entrees/${codeEntree}`, data, {
+      `${API_BASE_URL}entrees/${id_entree}`, data, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${TOKEN}`,
@@ -65,14 +65,14 @@ export const editEntee = async (codeEntree, entreesData) => {
   }
 };
 
-export const deleteEntree = async (codeEntree) => {
+export const deleteEntree = async (id_entree) => {
   if (!TOKEN) {
     throw new Error("No token found");
   }
 
   try {
     const response = await axios.delete(
-      `${API_BASE_URL}entrees/${codeEntree}`, {
+      `${API_BASE_URL}entrees/${id_entree}`, {
         headers: {
           "Authorization": `Bearer ${TOKEN}`,
         },

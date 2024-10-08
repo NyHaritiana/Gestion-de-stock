@@ -25,7 +25,7 @@ function Login() {
       if (response.status === 200) {
         const { token } = response.data;
         localStorage.setItem("authToken", token);
-        navigate("/");
+        navigate("/home");
       }
     } catch (error) {
       setError("Échec de l'authentification.")

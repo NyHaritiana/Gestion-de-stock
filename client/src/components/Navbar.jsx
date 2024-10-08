@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import search from "../assets/chercher.png";
 
 function Navbar() {
@@ -8,27 +8,36 @@ function Navbar() {
       <nav className="fixed top-0 left-0 right-0 w-auto max-w-7xl mx-auto mt-2 bg-gray-100 bg-opacity-50 backdrop-filter backdrop-blur-3xl p-4 rounded-full shadow-lg z-50">
         <div className="w-full container mx-auto flex flex-wrap items-center justify-between">
           <nav>
-            <ul className="flex items-center justify-between font-bold text-sm text-gray-600 uppercase no-underline">
+          <ul className="flex items-center justify-between font-bold text-sm text-gray-600 uppercase no-underline">
               <li>
-                <Link className="m-2" to="/">
+                <NavLink 
+                  to="/home" 
+                  className={({ isActive }) => 
+                    isActive ? "text-blue-800 m-2" : "m-2 hover:text-blue-800"
+                  }
+                >
                   <i className="fas fa-home"></i>
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
-                  className="hover:text-gray-800 px-4"
-                  to="/Entree"
+                <NavLink 
+                  to="/Entree" 
+                  className={({ isActive }) => 
+                    isActive ? "text-blue-800 hover:text-blue-900 px-4" : "hover:text-blue-800 px-4"
+                  }
                 >
                   Entrée
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
-                  className="hover:text-gray-800 px-4"
-                  to="/Sortie"
+                <NavLink 
+                  to="/Sortie" 
+                  className={({ isActive }) => 
+                    isActive ? "text-blue-800 hover:text-blue-900 px-4" : "hover:text-blue-800 px-4"
+                  }
                 >
                   Sortie
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </nav>

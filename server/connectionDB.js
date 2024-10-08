@@ -1,15 +1,9 @@
-import pkg from 'pg';
+const { Sequelize } = require('sequelize');
 
-const { Client } = pkg;
-
-const con = new Client({
+const sequelize = new Sequelize("g_stockDB", "postgres", "myrhl", {
     host: "localhost",
-    user: "postgres",
+    dialect: "postgres",
     port: 5432,
-    password: "myrhl",
-    database: "g_stockDB"
 });
 
-con.connect()
-    .then(() => console.log("Database connected"))
-    .catch(err => console.error("Connection error", err.stack));
+module.exports = sequelize;

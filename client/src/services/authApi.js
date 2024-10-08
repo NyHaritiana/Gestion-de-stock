@@ -14,4 +14,4 @@ export async function auth(formData) {
       console.log("Error: ", error);
       throw error;
     }
-}   
+}

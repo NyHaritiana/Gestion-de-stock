@@ -14,25 +14,23 @@ const corsOption = {
 };
 
 const defaultUser = {
-  email: 'dsimfa@gmail.com',
+  username: 'dsimfa@gmail.com',
   password: '1234567890'
 };
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   
-  if (email === defaultUser.email && password === defaultUser.password) {
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+  if (username === defaultUser.username && password === defaultUser.password) {
+    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
     res.status(200).json({ message: 'Authentification réussie', token });
   } else {
     res.status(401).json({ message: 'Email ou mot de passe incorrect' });
   }
   
-  console.log(email, password);
+  console.log(username, password);
 });
-
-console.log("okkkkkkkkkkkkkkkkkkkkk");
 
 router.get('/', cors(corsOption), authMiddleware, (req, res) =>{
   res.status(200).json({message: `Bienvenue`});

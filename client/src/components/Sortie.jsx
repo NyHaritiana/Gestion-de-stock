@@ -1,7 +1,6 @@
 import Navbar from "./Navbar";
 import React, { useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import Slider from '@mui/material/Slider'
 
 function Sortie() {
 
@@ -50,7 +49,7 @@ function Sortie() {
                     htmlFor="country"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Catégories
+                    Numéro Comptable
                   </label>
                   <div className="mt-2">
                     <select
@@ -90,7 +89,7 @@ function Sortie() {
                       htmlFor="street-address"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Référence facture
+                      Désignation
                     </label>
                     <div className="mt-2">
                       <input
