@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5193/api/";
+const API_BASE_URL = "http://localhost:3000/api/sorties/";
 const TOKEN = localStorage.getItem("authToken");
 
 export const getSortie = async () => {
@@ -9,7 +9,7 @@ export const getSortie = async () => {
   }
 
   try {
-    const response = await axios.get(`${API_BASE_URL}sorties`, {
+    const response = await axios.get(`${API_BASE_URL}getSortie`, {
       headers: {
         "Authorization": `Bearer ${TOKEN}`,
       },
@@ -30,7 +30,7 @@ export const createSortie = async (sortiesData) => {
 
   try {
     let data = JSON.stringify(sortiesData);
-    const response = await axios.post(`${API_BASE_URL}sorties`, data, {
+    const response = await axios.post(`${API_BASE_URL}addSortie`, data, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${TOKEN}`,

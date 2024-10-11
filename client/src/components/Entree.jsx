@@ -303,11 +303,6 @@ function Entree() {
                       </td>
                     </tr>
                   )}
-                  <tr>
-                    <td className="text-sm"></td>
-                    <td className="text-sm"></td>
-                    <td className="text-sm"></td>
-                  </tr>
                 </tbody>
               </table>
             </div>

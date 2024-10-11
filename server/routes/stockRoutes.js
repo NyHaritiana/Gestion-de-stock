@@ -33,5 +33,25 @@ router.get('/getArticles', async (req, res) => {
     }
 });
 
+router.put('/updateArticles/:ref_article', async (req, res) => {
+    const ref_article = req.params.ref_article;
+    const updatedData = req.body;
+  
+    try {
+      const article = await Stock.findOne({ where: { ref_article } });
+  
+      if (!article) {
+        return res.status(404).json({ message: 'Article non trouvé' });
+      }
+  
+      await article.update(updatedData);
+  
+      res.status(200).json({ message: "Article mis à jour avec succès", article });
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'article :", error);
+      res.status(500).json({ message: 'Erreur serveur', error });
+    }
+  });
+
 
 module.exports = router;

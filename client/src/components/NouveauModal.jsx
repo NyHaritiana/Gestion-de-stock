@@ -3,7 +3,6 @@ import { createArticle } from "../services/articleApi";
 
 function NouveauModal({ onClose, onAddArticle }) {
   const [nouveauModal, setNouveauModal] = useState(false);
-  const [articles, setArticles] = useState([]);
   const [articlesData, setArticleData] = useState({
     ref_article: "",
     designation: "",
@@ -22,7 +21,7 @@ function NouveauModal({ onClose, onAddArticle }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Article : ", articlesData);
+  
     const newArticle = {
       ref_article: articlesData.ref_article,
       designation: articlesData.designation,
@@ -33,19 +32,25 @@ function NouveauModal({ onClose, onAddArticle }) {
       ref_facture: articlesData.ref_facture,
       date: articlesData.date
     };
-    
+  
+    // Ajouter immédiatement l'article au tableau avant l'appel à l'API
+    onAddArticle(newArticle);  
+  
     try {
       const response = await createArticle(newArticle);
       if (response.status === 200) {
-        onAddArticle(newArticle);
         const { token } = response.data;
         localStorage.setItem("authToken", token);
-        onClose();
+        onClose();  // Fermer le modal si tout s'est bien passé
+      } else {
+        console.error("Erreur lors de l'ajout de l'article:", response);
       }
     } catch (error) {
-      console.error("Authentication failed:", error);
+      console.error("Erreur lors de la création de l'article:", error);
+      // Si l'API échoue, vous pouvez enlever l'article du tableau ici ou afficher un message d'erreur
     }
-
+  
+    // Réinitialiser le formulaire
     setArticleData({
       ref_article: "",
       designation: "",
@@ -57,6 +62,7 @@ function NouveauModal({ onClose, onAddArticle }) {
       date: "",
     });
   };
+  
 
   const handleClickNouveau = (id) => {
     if (id === 4) {

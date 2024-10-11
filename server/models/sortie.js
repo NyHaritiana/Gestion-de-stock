@@ -3,7 +3,7 @@ const sequelize = require('../connectionDB');
 
 const Sortie = sequelize.define('Sortie', {
     id_sortie: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         unique: true,
         autoIncrement: true,
         primaryKey: true
@@ -22,7 +22,8 @@ const Sortie = sequelize.define('Sortie', {
     },
     date_sortie: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: DataTypes.NOW
     }
 }, {
     tableName: 'SORTIE',

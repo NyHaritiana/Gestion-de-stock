@@ -52,7 +52,7 @@ export const editArticle = async (ref_article, articlesData) => {
     try {
       let data = JSON.stringify(articlesData);
       const response = await axios.put(
-        `${API_BASE_URL}articles/${ref_article}`, data, {
+        `${API_BASE_URL}updateArticles/${ref_article}`, data, {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${TOKEN}`,

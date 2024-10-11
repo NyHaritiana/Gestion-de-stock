@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getArticle } from "../services/articleApi";
 import NouveauModal from "./NouveauModal";
+import TableModal from "./TableModal";
 
 function TableauStocks() {
   const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false); 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   const [datatablehead, setDatahead] = useState([
     { idTablehead: 1, libelle: "Ref. Article" },
@@ -19,26 +20,28 @@ function TableauStocks() {
     { idTablehead: 8, libelle: "Date" },
   ]);
 
-  useEffect(() => {
     const fetchArticles = async () => {
       try {
         const data = await getArticle();
         setArticles(data);
       } catch (err) {
         console.error("Erreur lors de la recuperation", err);
-        setError("Erreur lors de la recuperation");
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchArticles();
-  }, []);
-
-  const handleAddArticle = (newArticle) => {
-    console.log("Article ajouté au tableau :", newArticle); 
+  const handleAddArticle = async (newArticle) => {
+    console.log("Article ajouté au tableau :", newArticle);
     setArticles((prevArticles) => [...prevArticles, newArticle]);
   };
+
+  const handleRowClick = (article) => {
+    setSelectedArticle(article);
+    setIsTableModalOpen(true);
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
 
   return (
     <>
@@ -47,12 +50,12 @@ function TableauStocks() {
           STOCKS AU SEIN DE LA DSI:
         </h1>
         <table className="min-w-full divide-gray-200 table-fixed rounded-lg dark:divide-gray-700 shadow my-4 border-collapse border border-slate-500">
-          <thead className="bg-gray-400 dark:bg-gray-900">
+          <thead className="bg-blue-600 dark:bg-gray-900">
             <tr>
               {datatablehead.map((item) => (
                 <th
                   scope="col"
-                  className="py-3 px-4 text-xs font-bold tracking-wider text-center text-gray-800 uppercase dark:text-gray-400"
+                  className="py-6 px-4 text-xs font-bold tracking-wider text-center text-white uppercase dark:text-gray-400"
                   key={item.idTablehead}
                 >
                   {item.libelle}
@@ -66,6 +69,7 @@ function TableauStocks() {
                 <tr
                   key={article.ref_article}
                   className="border border-slate-700"
+                  onClick={() => handleRowClick(article)}
                 >
                   <td className="text-center py-4">{article.ref_article}</td>
                   <td className="text-center py-4">{article.designation}</td>
@@ -87,9 +91,15 @@ function TableauStocks() {
           </tbody>
         </table>
       </div>
-      {isModalOpen && (
+      {isTableModalOpen && selectedArticle && (
+        <TableModal
+          article={selectedArticle}
+          onClose={() => setIsTableModalOpen(false)}
+        />
+      )}
+      {isAddModalOpen && (
         <NouveauModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => setIsAddModalOpen(false)}
           onAddArticle={handleAddArticle}
         />
       )}

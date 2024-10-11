@@ -1,15 +1,101 @@
 import Navbar from "./Navbar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { createSortie, getSortie } from "../services/sortieApi";
+import { getArticle } from "../services/articleApi";
 
 function Sortie() {
-
   const [dataCategory, setDataCategory] = useState([
     { idCateg: 1, libelle: "Materiels" },
     { idCateg: 2, libelle: "Fournitures" },
     { idCateg: 3, libelle: "Accessoires" },
     { idCateg: 4, libelle: "Equipements" },
   ]);
+
+  const [sortieData, setSortieData] = useState({
+    nom_recepteur: "",
+    date_sortie: "",
+    quantite: "",
+    ref_article: ""
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSortieData({ ...sortieData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Sorties: ", sortieData);
+    const newSortie = {
+      nom_recepteur: sortieData.nom_recepteur,
+      date_sortie: sortieData.date_sortie,
+      quantite: sortieData.quantite,
+      ref_article: sortieData.ref_article,
+      designation:
+        articles.find(
+          (article) => article.ref_article === sortieData.ref_article
+        )?.designation || "Inconnu",
+    };
+    setSorties((prevSorties) => [...prevSorties, newSortie]);
+    setSortieData({
+      nom_recepteur: "",
+      date_sortie: "",
+      quantite: "",
+      ref_article: ""
+    });
+    try {
+      const response = await createSortie(newSortie);
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem("authToken", token);
+      }
+    } catch (error) {
+      console.error("Authentication failed:", error);
+    }
+  };
+
+  const handleSelectChange = (e) => {
+    const { value } = e.target;
+    setSortieData({ ...sortieData, ref_article: value });
+  };
+
+  const [articles, setArticles] = useState([]);
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const data = await getArticle();
+        setArticles(data);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des articles", err);
+      }
+    };
+
+    fetchArticles();
+  }, []);
+
+  const [sorties, setSorties] = useState([]);
+  useEffect(() => {
+    const fetchSorties = async () => {
+      try {
+        const data = await getSortie();
+        const enrichedSorties = data.map((sortie) => {
+          const article = articles.find(
+            (article) => article.ref_article === sortie.ref_article
+          );
+          return {
+            ...sortie,
+            designation: article ? article.designation : "Inconnu",
+          };
+        });
+        setSorties(enrichedSorties);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des articles", err);
+      }
+    };
+
+    fetchSorties();
+  }, [articles]);
 
   return (
     <>
@@ -33,7 +119,7 @@ function Sortie() {
       {/* -------------form--------------- */}
       <div className="container mx-auto py-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <form className="shadow px-4 rounded py-4">
+          <form className="shadow px-4 rounded py-4" onSubmit={handleSubmit}>
             <div className="space-y-12">
               <div className="flex flex-col items-center py-4">
                 <a
@@ -46,29 +132,39 @@ function Sortie() {
               <div className="border-b border-gray-900/10 pb-12">
                 <div className="sm:col-span-4">
                   <label
-                    htmlFor="country"
+                    htmlFor="ref_article"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Numéro Comptable
+                    Référence article
                   </label>
                   <div className="mt-2">
                     <select
-                      id="country"
-                      name="country"
-                      autoComplete="country-name"
+                      id="ref_article"
+                      name="ref_article"
+                      value={sortieData.ref_article}
+                      onChange={handleSelectChange}
                       className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                       <option></option>
-                      {dataCategory.map((item) => (
-                        <option key={item.idCateg}>{item.libelle}</option>
-                      ))}
+                      {articles.length > 0 ? (
+                        articles.map((article) => (
+                          <option
+                            key={article.ref_article}
+                            value={article.ref_article}
+                          >
+                            {article.ref_article} - {article.designation}
+                          </option>
+                        ))
+                      ) : (
+                        <option disabled>Chargement des articles...</option>
+                      )}
                     </select>
                   </div>
                 </div>
                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="sm:col-span-4">
                     <label
-                      htmlFor="first-name"
+                      htmlFor="nom_recepteur"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Nom du recepteur
@@ -76,27 +172,11 @@ function Sortie() {
                     <div className="mt-2">
                       <input
                         type="text"
-                        name="first-name"
-                        id="first-name"
-                        autoComplete="given-name"
-                        className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-4">
-                    <label
-                      htmlFor="street-address"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Désignation
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        name="street-address"
-                        id="street-address"
-                        autoComplete="street-address"
+                        name="nom_recepteur"
+                        id="nom_recepteur"
+                        autoComplete="nom_recepteur"
+                        onChange={handleChange}
+                        value={sortieData.nom_recepteur}
                         className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
@@ -104,7 +184,7 @@ function Sortie() {
 
                   <div className="sm:col-span-2 sm:col-start-1">
                     <label
-                      htmlFor="quantité"
+                      htmlFor="quantite"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Quantité
@@ -112,9 +192,11 @@ function Sortie() {
                     <div className="mt-2">
                       <input
                         type="number"
-                        name="quantité"
-                        id="quantité"
+                        name="quantite"
+                        id="quantite"
                         autoComplete="address-level2"
+                        onChange={handleChange}
+                        value={sortieData.quantite}
                         className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
@@ -122,17 +204,19 @@ function Sortie() {
 
                   <div className="sm:col-span-2">
                     <label
-                      htmlFor="date"
+                      htmlFor="date_sortie"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Date
                     </label>
                     <div className="mt-2">
                       <input
-                        id="date"
-                        name="date"
+                        id="date_sortie"
+                        name="date_sortie"
                         type="date"
                         autoComplete="date"
+                        onChange={handleChange}
+                        value={sortieData.date_sortie}
                         className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
@@ -201,21 +285,21 @@ function Sortie() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="text-sm">Clavier</td>
-                    <td className="text-sm">4</td>
-                    <td className="text-sm">04-02-2020</td>
-                  </tr>
-                  <tr>
-                    <td className="text-sm">Prise</td>
-                    <td className="text-sm">1</td>
-                    <td className="text-sm">19-09-2024</td>
-                  </tr>
-                  <tr>
-                    <td className="text-sm">Clé molette</td>
-                    <td className="text-sm">5</td>
-                    <td className="text-sm">08-08-2021</td>
-                  </tr>
+                {sorties.length > 0 ? (
+                    sorties.map((sortie) => (
+                      <tr key={sortie.ref_article}>
+                        <td className="text-sm">{sortie.designation}</td>
+                        <td className="text-sm">{sortie.quantite}</td>
+                        <td className="text-sm">{new Date(sortie.date_sortie).toLocaleDateString()}</td>
+                      </tr>
+                    ))
+                    ) : (
+                    <tr>
+                      <td colSpan="3" className="text-center text-sm">
+                        Aucune entrée trouvée.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
