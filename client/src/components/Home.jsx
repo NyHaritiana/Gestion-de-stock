@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import "../App.css";
 import exterieur from "../assets/exterieur.png";
@@ -6,6 +6,9 @@ import nouveau from "../assets/nouveau.png";
 import rapport from "../assets/rapport.png";
 import NouveauModal from "./NouveauModal";
 import TableauStocks from "./TableauStocks";
+import { deleteArticle, getArticle } from "../services/articleApi";
+import PdfGenerator from "./PdfGenerator";
+import PdfModal from "./PdfModal";
 
 function Home() {
 
@@ -49,10 +52,48 @@ function Home() {
   };
 
   const [nouveauModal, setNouveauModal] = useState(false);
+  const[pdfModal, setPdfModal] = useState(false);
 
   const handleClickNouveau = (id) => {
     if (id === 4) {
       setNouveauModal(!nouveauModal);
+    }
+    if (id === 5) {
+      setPdfModal(!pdfModal);
+    }
+  };
+
+  const [articles, setArticles] = useState([]);
+  const fetchArticles = async () => {
+    const articlesData = await getArticle();
+    setArticles(articlesData);
+  };
+  const handleAddArticle = async (newArticle) => {
+    console.log("Article ajouté au tableau :", newArticle);
+    setArticles((prevArticles) => {
+      const updatedArticles = [...prevArticles, newArticle];
+      console.log("Mise à jour des articles :", updatedArticles);
+      return updatedArticles;
+    });
+  };
+
+  const handleUpdateArticle = (updatedArticle) => {
+    setArticles((prevArticles) =>
+      prevArticles.map((article) =>
+        article.ref_article === updatedArticle.ref_article ? updatedArticle : article
+      )
+    );
+  };
+
+  const handleDeleteArticle = async (ref_article) => {
+    try {
+      const response = await deleteArticle(ref_article);
+      setArticles((prevArticles) => prevArticles.filter(article => article.ref_article !== ref_article));
+      if(response.status === 200){
+        console.log("Articles a ete bien supprimer");
+      } 
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'article :", error);
     }
   };
 
@@ -60,6 +101,13 @@ function Home() {
     setNouveauModal(false); 
   };
 
+  const ExitPdf = () => {
+    setPdfModal(false); 
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
 
   return (
     <>
@@ -140,11 +188,12 @@ function Home() {
                 <p className="font-normal px-6">{items.detail}</p>
               </article>
             ))}
-          {nouveauModal && ( <NouveauModal onClose={ExitNouveau} /> )}
+          {nouveauModal && ( <NouveauModal onClose={ExitNouveau} onAddArticle={handleAddArticle} /> )}
+          {pdfModal && ( <PdfModal onExit={ExitPdf} /> )}
         </section>
 
         {/* -------------tableau---------- */}
-        <TableauStocks />
+        <TableauStocks articles={articles} handleAddArticle={handleAddArticle} handleUpdateArticle={handleUpdateArticle} handleDeleteArticle={handleDeleteArticle} />
       </div>
 
       <footer className="w-full border-t bg-white pb-12">

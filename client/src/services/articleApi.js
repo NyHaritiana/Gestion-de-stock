@@ -42,7 +42,7 @@ export const createArticle = async (articlesData) => {
       console.error("Erreur lors de l'envoi des données:", error);
       throw error;
     }
-};
+};  
 
 export const editArticle = async (ref_article, articlesData) => {
     if (!TOKEN) {
@@ -72,7 +72,7 @@ export const editArticle = async (ref_article, articlesData) => {
   
     try {
       const response = await axios.delete(
-        `${API_BASE_URL}articles/${ref_article}`, {
+        `${API_BASE_URL}deleteArticles/${ref_article}`, {
           headers: {
             "Authorization": `Bearer ${TOKEN}`,
           },

@@ -3,7 +3,7 @@ const router = express.Router();
 const Stock = require('../models/stock');
 
 router.post('/addArticles', async (req, res) => {
-    const { ref_article, designation, description, quantite, unite, num_comptable, ref_facture, date} = req.body;
+    const { ref_article, designation, description, quantite, unite, num_comptable, ref_facture, date, qr_code} = req.body;
 
     try{
         const newStock = await Stock.create({
@@ -14,7 +14,8 @@ router.post('/addArticles', async (req, res) => {
             unite,
             num_comptable,
             ref_facture,
-            date
+            date,
+            qr_code
         });
         return res.status(201).json(newStock);
     } catch (error) {
@@ -52,6 +53,24 @@ router.put('/updateArticles/:ref_article', async (req, res) => {
       res.status(500).json({ message: 'Erreur serveur', error });
     }
   });
+
+  router.delete('/deleteArticles/:ref_article', async (req, res) => {
+    const ref_article = req.params.ref_article;
+
+    try {
+        const article = await Stock.findOne({ where: { ref_article } });
+
+        if (!article) {
+            return res.status(404).json({ message: 'Article non trouvé' });
+        }
+
+        await article.destroy();
+        return res.status(200).json({ message: 'Article supprimé avec succès' });
+    } catch (error) {
+        console.error("Erreur lors de la suppression de l'article :", error);
+        return res.status(500).json({ message: 'Erreur serveur', error });
+    }
+});
 
 
 module.exports = router;

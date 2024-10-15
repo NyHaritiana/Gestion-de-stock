@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { getArticle } from "../services/articleApi";
+import { AiFillDelete } from "react-icons/ai";
 import NouveauModal from "./NouveauModal";
 import TableModal from "./TableModal";
 
-function TableauStocks() {
-  const [articles, setArticles] = useState([]);
-  const [isTableModalOpen, setIsTableModalOpen] = useState(false); 
+function TableauStocks({ articles, handleAddArticle, handleUpdateArticle, handleDeleteArticle }) {
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
 
@@ -18,30 +17,13 @@ function TableauStocks() {
     { idTablehead: 7, libelle: "N° Comptable" },
     { idTablehead: 6, libelle: "Ref. Facture" },
     { idTablehead: 8, libelle: "Date" },
+    { idTablehead: 9, libelle: "Actions" },
   ]);
-
-    const fetchArticles = async () => {
-      try {
-        const data = await getArticle();
-        setArticles(data);
-      } catch (err) {
-        console.error("Erreur lors de la recuperation", err);
-      }
-    };
-
-  const handleAddArticle = async (newArticle) => {
-    console.log("Article ajouté au tableau :", newArticle);
-    setArticles((prevArticles) => [...prevArticles, newArticle]);
-  };
 
   const handleRowClick = (article) => {
     setSelectedArticle(article);
     setIsTableModalOpen(true);
   };
-
-  useEffect(() => {
-    fetchArticles();
-  }, []);
 
   return (
     <>
@@ -49,7 +31,7 @@ function TableauStocks() {
         <h1 className="font-bold py-4 text-gray-700 text-xl text-center">
           STOCKS AU SEIN DE LA DSI:
         </h1>
-        <table className="min-w-full divide-gray-200 table-fixed rounded-lg dark:divide-gray-700 shadow my-4 border-collapse border border-slate-500">
+        <table className="min-w-full divide-gray-200 table-fixed rounded-lg dark:divide-gray-700 shadow my-4 border-collapse border border-slate-500 overflow-hidden">
           <thead className="bg-blue-600 dark:bg-gray-900">
             <tr>
               {datatablehead.map((item) => (
@@ -79,6 +61,18 @@ function TableauStocks() {
                   <td className="text-center py-4">{article.num_comptable}</td>
                   <td className="text-center py-4">{article.ref_facture}</td>
                   <td className="text-center py-4">{article.date}</td>
+                  <td className="text-center py-4">
+                    <div className="flex justify-center items-center">
+                      <AiFillDelete
+                        className="text-red-600 cursor-pointer"
+                        size={20}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteArticle(article.ref_article);
+                        }}
+                      />
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (
@@ -91,16 +85,18 @@ function TableauStocks() {
           </tbody>
         </table>
       </div>
+
+      {isAddModalOpen && (
+        <NouveauModal
+          onAddArticle={handleAddArticle}
+          onClose={() => setIsAddModalOpen(false)}
+        />
+      )}
       {isTableModalOpen && selectedArticle && (
         <TableModal
           article={selectedArticle}
           onClose={() => setIsTableModalOpen(false)}
-        />
-      )}
-      {isAddModalOpen && (
-        <NouveauModal
-          onClose={() => setIsAddModalOpen(false)}
-          onAddArticle={handleAddArticle}
+          onUpdateArticle={handleUpdateArticle}
         />
       )}
     </>

@@ -35,6 +35,10 @@ const Stock = sequelize.define('Stock', {
     date: {
         type: DataTypes.DATE,
         allowNull: false
+    },
+    qr_code: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     tableName: 'ARTICLE',

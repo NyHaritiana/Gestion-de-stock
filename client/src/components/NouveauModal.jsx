@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createArticle } from "../services/articleApi";
+import QRCode from "qrcode";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function NouveauModal({ onClose, onAddArticle }) {
+  console.log("onAddArticle reçu dans NouveauModal :", onAddArticle);
+  console.log("Props reçues dans NouveauModal :", { onClose, onAddArticle });
+
   const [nouveauModal, setNouveauModal] = useState(false);
   const [articlesData, setArticleData] = useState({
     ref_article: "",
@@ -14,14 +20,45 @@ function NouveauModal({ onClose, onAddArticle }) {
     date: "",
   });
 
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setArticleData({ ...articlesData, [name]: value });
   };
 
+  useEffect(() => {
+    const generateQRCode = async () => {
+      try {
+        const qrData = `${articlesData.ref_article} - ${articlesData.designation}`;
+        const qrUrl = await QRCode.toDataURL(qrData);
+        setQrCodeUrl(qrUrl);
+      } catch (error) {
+        console.error("Erreur lors de la génération du QR code :", error);
+      }
+    };
+
+    generateQRCode();
+  }, [articlesData]);
+
+  const successNotify = () => {
+    toast.success("ajout réussi!", {
+      position: "top-center",
+      autoClose: 1500,
+    });
+  };
+
+  const errorNotify = () => {
+    toast.error("erreur de l'ajout!", {
+      position: "top-center",
+      autoClose: 1500,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    console.log("Formulaire soumis");
+
     const newArticle = {
       ref_article: articlesData.ref_article,
       designation: articlesData.designation,
@@ -30,39 +67,28 @@ function NouveauModal({ onClose, onAddArticle }) {
       unite: articlesData.unite,
       num_comptable: articlesData.num_comptable,
       ref_facture: articlesData.ref_facture,
-      date: articlesData.date
+      date: articlesData.date,
+      qr_code: qrCodeUrl,
     };
-  
-    // Ajouter immédiatement l'article au tableau avant l'appel à l'API
-    onAddArticle(newArticle);  
-  
-    try {
-      const response = await createArticle(newArticle);
-      if (response.status === 200) {
-        const { token } = response.data;
-        localStorage.setItem("authToken", token);
-        onClose();  // Fermer le modal si tout s'est bien passé
-      } else {
-        console.error("Erreur lors de l'ajout de l'article:", response);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la création de l'article:", error);
-      // Si l'API échoue, vous pouvez enlever l'article du tableau ici ou afficher un message d'erreur
+
+    const response = await createArticle(newArticle);
+    console.log("Réponse de l'API :", response);
+
+    if (response.status === 200) {
+      successNotify();
+    } else {
+      errorNotify();
     }
-  
-    // Réinitialiser le formulaire
-    setArticleData({
-      ref_article: "",
-      designation: "",
-      description: "",
-      quantite: "",
-      unite: "",
-      num_comptable: "",
-      ref_facture: "",
-      date: "",
-    });
+
+    if (typeof onAddArticle === "function") {
+      console.log("Appel de onAddArticle avec :", newArticle);
+      await onAddArticle(newArticle);
+    } else {
+      console.error("onAddArticle n'est pas une fonction");
+    }
+
+    onClose();
   };
-  
 
   const handleClickNouveau = (id) => {
     if (id === 4) {
@@ -273,7 +299,11 @@ function NouveauModal({ onClose, onAddArticle }) {
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
                           Code QR:
                         </h2>
-                        <p className="mt-1 text-sm leading-6 text-gray-600"></p>
+                        {qrCodeUrl ? (
+                          <img src={qrCodeUrl} alt="QR Code" />
+                        ) : (
+                          <p>QR Code is being generated...</p>
+                        )}
                       </div>
                     </div>
 
@@ -287,7 +317,7 @@ function NouveauModal({ onClose, onAddArticle }) {
                       </button>
                       <button
                         type="submit"
-                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       >
                         Confirmer
                       </button>
@@ -298,6 +328,7 @@ function NouveauModal({ onClose, onAddArticle }) {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );
