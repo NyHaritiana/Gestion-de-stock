@@ -7,11 +7,10 @@ import rapport from "../assets/rapport.png";
 import NouveauModal from "./NouveauModal";
 import TableauStocks from "./TableauStocks";
 import { deleteArticle, getArticle } from "../services/articleApi";
-import PdfGenerator from "./PdfGenerator";
 import PdfModal from "./PdfModal";
+import Exterieur from "./Exterieur";
 
 function Home() {
-
   const [datatitle, setDatatitle] = useState([
     { idTitle: 1, libelles: "Tous" },
     { idTitle: 2, libelles: "Matériels" },
@@ -23,24 +22,20 @@ function Home() {
     {
       idArticle: 2,
       title: "Stocks intérieurs",
-      detail: "Suivi des stocks au niveau de la direction. ",
     },
     {
       idArticle: 3,
       title: "Affaires Extérieur",
-      detail: "Sécurisation des matériels entrant et sortant. ",
       image: exterieur,
     },
     {
       idArticle: 4,
       title: "Nouveau",
-      detail: "Options d'ajout du nouveau stock ou matériel. ",
       image: nouveau,
     },
     {
       idArticle: 5,
       title: "Rapports",
-      detail: "Génerer en pdf les mouvements du stock. ",
       image: rapport,
     },
   ]);
@@ -52,9 +47,13 @@ function Home() {
   };
 
   const [nouveauModal, setNouveauModal] = useState(false);
-  const[pdfModal, setPdfModal] = useState(false);
+  const [pdfModal, setPdfModal] = useState(false);
+  const [exterieurModal, setExterieurModal] = useState(false);
 
   const handleClickNouveau = (id) => {
+    if (id === 3) {
+      setExterieurModal(!exterieurModal);
+    }
     if (id === 4) {
       setNouveauModal(!nouveauModal);
     }
@@ -80,7 +79,9 @@ function Home() {
   const handleUpdateArticle = (updatedArticle) => {
     setArticles((prevArticles) =>
       prevArticles.map((article) =>
-        article.ref_article === updatedArticle.ref_article ? updatedArticle : article
+        article.ref_article === updatedArticle.ref_article
+          ? updatedArticle
+          : article
       )
     );
   };
@@ -88,21 +89,24 @@ function Home() {
   const handleDeleteArticle = async (ref_article) => {
     try {
       const response = await deleteArticle(ref_article);
-      setArticles((prevArticles) => prevArticles.filter(article => article.ref_article !== ref_article));
-      if(response.status === 200){
+      setArticles((prevArticles) =>
+        prevArticles.filter((article) => article.ref_article !== ref_article)
+      );
+      if (response.status === 200) {
         console.log("Articles a ete bien supprimer");
-      } 
+      }
     } catch (error) {
       console.error("Erreur lors de la suppression de l'article :", error);
     }
   };
 
   const ExitNouveau = () => {
-    setNouveauModal(false); 
+    setNouveauModal(false);
+    setExterieurModal(false);
   };
 
   const ExitPdf = () => {
-    setPdfModal(false); 
+    setPdfModal(false);
   };
 
   useEffect(() => {
@@ -129,7 +133,7 @@ function Home() {
         </div>
       </header>
 
-      {/* -------------navig----------- */}
+      {/* -------------navig----------- 
       <nav className="w-full py-4 border-t border-b bg-gray-100">
         <div className="w-full flex-grow sm:flex sm:items-center sm:w-auto">
           <div className="w-full container mx-auto flex flex-col sm:flex-row sm:flex-wrap items-center justify-center text-sm font-bold uppercase mt-0 px-6 py-2">
@@ -154,16 +158,16 @@ function Home() {
         </div>
       </nav>
 
-      {/* ----------article-------- */}
+       ----------article-------- */}
       <div className="container mx-auto py-2">
-        <section className="flex justify-center w-full mx-auto px-3">
+        <section className="flex flex-wrap justify-center w-full mx-auto px-3">
           {dataarticle
             .filter((items) =>
               selectedArticle === 1 ? true : items.idArticle === selectedArticle
             )
             .map((items) => (
               <article
-                className={`w-48 h-60 shadow shadow-blue-600 my-4 mx-8 rounded transform transition-transform duration-1000 hover:scale-105 
+                className={`flex flex-col sm:flex-row w-full sm:w-60 h-auto sm:h-16 shadow my-4 mx-2 sm:mx-8 rounded transform transition-transform duration-1000 hover:scale-105  
                 ${
                   items.idArticle === 2
                     ? "bg-gradient-to-tr from-blue-900 to-blue-400 text-white"
@@ -172,28 +176,41 @@ function Home() {
                 key={items.idArticle}
                 onClick={() => handleClickNouveau(items.idArticle)}
               >
-                <div className="px-6 py-4 w-24 h-24">
-                  <img src={items.image} />
+                <div className={`flex justify-center items-center px-2 py-2 w-full ${ items.idArticle === 5 ? "sm:w-14 h-14" : "sm:w-16 h-16" }`}>
+                  <img
+                    src={items.image}
+                    className="max-h-16 max-w-16 object-contain"
+                  />
                 </div>
-                <div className="flex flex-col justify-start px-6 ">
+                <div className="flex justify-center items-center text-center sm:text-left">
                   <a
                     href="#"
-                    className={`text-sm font-bold uppercase pb-4 ${
+                    className={`text-sm font-bold uppercase ${
                       items.idArticle === 2 ? "text-gray-200" : "text-blue-800"
                     }`}
                   >
                     {items.title}
                   </a>
                 </div>
-                <p className="font-normal px-6">{items.detail}</p>
               </article>
             ))}
-          {nouveauModal && ( <NouveauModal onClose={ExitNouveau} onAddArticle={handleAddArticle} /> )}
-          {pdfModal && ( <PdfModal onExit={ExitPdf} /> )}
+          {exterieurModal && <Exterieur onClose={ExitNouveau} />}
+          {nouveauModal && (
+            <NouveauModal
+              onClose={ExitNouveau}
+              onAddArticle={handleAddArticle}
+            />
+          )}
+          {pdfModal && <PdfModal onExit={ExitPdf} />}
         </section>
 
         {/* -------------tableau---------- */}
-        <TableauStocks articles={articles} handleAddArticle={handleAddArticle} handleUpdateArticle={handleUpdateArticle} handleDeleteArticle={handleDeleteArticle} />
+        <TableauStocks
+          articles={articles}
+          handleAddArticle={handleAddArticle}
+          handleUpdateArticle={handleUpdateArticle}
+          handleDeleteArticle={handleDeleteArticle}
+        />
       </div>
 
       <footer className="w-full border-t bg-white pb-12">

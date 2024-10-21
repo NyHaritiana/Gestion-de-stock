@@ -3,21 +3,19 @@ import React, { useEffect, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { createSortie, getSortie } from "../services/sortieApi";
 import { getArticle } from "../services/articleApi";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function Sortie() {
-  const [dataCategory, setDataCategory] = useState([
-    { idCateg: 1, libelle: "Materiels" },
-    { idCateg: 2, libelle: "Fournitures" },
-    { idCateg: 3, libelle: "Accessoires" },
-    { idCateg: 4, libelle: "Equipements" },
-  ]);
-
   const [sortieData, setSortieData] = useState({
     nom_recepteur: "",
     date_sortie: "",
     quantite: "",
-    ref_article: ""
+    ref_article: "",
   });
+
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [quantiteInsuffissant, setQuantiteInsuffisant] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,6 +25,28 @@ function Sortie() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Sorties: ", sortieData);
+
+    const articleSelected = articles.find(
+      (article) => article.ref_article === sortieData.ref_article
+    );
+  
+    if (!articleSelected) {
+      toast.error("Article non trouvé.");
+      return;
+    }
+
+    if (parseInt(sortieData.quantite) > parseInt(articleSelected.quantite)) {
+      setQuantiteInsuffisant(true);
+      setNotificationMessage(
+        `La quantité à sortir dépasse la quantité en stock (${articleSelected.quantite} unités disponibles).`
+      );
+      return;
+    } else {
+      setQuantiteInsuffisant(false);
+    }
+
+    setNotificationMessage("");
+
     const newSortie = {
       nom_recepteur: sortieData.nom_recepteur,
       date_sortie: sortieData.date_sortie,
@@ -37,21 +57,25 @@ function Sortie() {
           (article) => article.ref_article === sortieData.ref_article
         )?.designation || "Inconnu",
     };
+
     setSorties((prevSorties) => [...prevSorties, newSortie]);
+
     setSortieData({
       nom_recepteur: "",
       date_sortie: "",
       quantite: "",
-      ref_article: ""
+      ref_article: "",
     });
     try {
       const response = await createSortie(newSortie);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         const { token } = response.data;
         localStorage.setItem("authToken", token);
+        toast.success("Sortie crée avec succès")
       }
     } catch (error) {
-      console.error("Authentication failed:", error);
+      console.error("Échec de la création de la sortie:", error);
+      toast.error("Échec de la création de la sortie. Veuillez réessayer.");
     }
   };
 
@@ -197,7 +221,11 @@ function Sortie() {
                         autoComplete="address-level2"
                         onChange={handleChange}
                         value={sortieData.quantite}
-                        className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className={`block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 ${
+                          quantiteInsuffissant
+                            ? "ring-red-500 focus:ring-red-500"
+                            : "ring-gray-300 focus:ring-indigo-600"
+                        }`}
                       />
                     </div>
                   </div>
@@ -228,7 +256,7 @@ function Sortie() {
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
                   Notifications
                 </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600"></p>
+                <p className="mt-1 text-sm leading-6 text-red-600">{notificationMessage}</p>
               </div>
             </div>
 
@@ -241,7 +269,7 @@ function Sortie() {
               </button>
               <button
                 type="submit"
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Confirmer
               </button>
@@ -249,7 +277,7 @@ function Sortie() {
           </form>
           <div className="shadow px-4 rounded py-4">
             <h6 className="text-base font-bold text-center">
-              Statistiques des sorties par catégorie
+              Statistiques mensuelles des stocks sorties
             </h6>
             <BarChart
               series={[
@@ -261,12 +289,7 @@ function Sortie() {
               height={290}
               xAxis={[
                 {
-                  data: [
-                    "Matériels",
-                    "Fournitures",
-                    "Accessoires",
-                    "Equipements",
-                  ],
+                  data: ["Janvier", "Fevrier", "Mars", "Avril"],
                   scaleType: "band",
                 },
               ]}
@@ -276,36 +299,50 @@ function Sortie() {
               <h6 className="text-base font-bold text-center">
                 Historiques des sorties
               </h6>
-              <table className="min-w-full my-4 divide-gray-100 table-fixed dark:divide-gray-100">
-                <thead>
-                  <tr>
-                    <th className="text-left text-sm">Désignation</th>
-                    <th className="text-left text-sm">Quantité</th>
-                    <th className="text-left text-sm">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {sorties.length > 0 ? (
-                    sorties.map((sortie) => (
-                      <tr key={sortie.ref_article}>
-                        <td className="text-sm">{sortie.designation}</td>
-                        <td className="text-sm">{sortie.quantite}</td>
-                        <td className="text-sm">{new Date(sortie.date_sortie).toLocaleDateString()}</td>
-                      </tr>
-                    ))
-                    ) : (
+              <div className="h-64 overflow-y-auto">
+                <table className="min-w-full my-4 divide-gray-100 table-fixed dark:divide-gray-100">
+                  <thead>
                     <tr>
-                      <td colSpan="3" className="text-center text-sm">
-                        Aucune entrée trouvée.
-                      </td>
+                      <th className="text-center text-sm">Désignation</th>
+                      <th className="text-center text-sm">Quantité</th>
+                      <th className="text-center text-sm">Date</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {sorties.length > 0 ? (
+                      sorties.map((sortie, index) => (
+                        <tr key={`${sortie.ref_article}-${index}`}>
+                          <td className="text-center text-sm">
+                            {sortie.designation}
+                          </td>
+                          <td className="text-center text-sm">
+                            {sortie.quantite}
+                          </td>
+                          <td className="text-center text-sm">
+                            {new Date(sortie.date_sortie).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" className="text-center text-sm">
+                          Aucune entrée trouvée.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mt-6 flex items-center justify-end gap-x-6">
+                <button className="text-blue-500 text-base rounded px-2 py-1">
+                  Voir plus
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

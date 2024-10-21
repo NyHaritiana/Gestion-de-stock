@@ -28,9 +28,7 @@ function TableauStocks({ articles, handleAddArticle, handleUpdateArticle, handle
   return (
     <>
       <div className="w-full mx-auto px-3">
-        <h1 className="font-bold py-4 text-gray-700 text-xl text-center">
-          STOCKS AU SEIN DE LA DSI:
-        </h1>
+        <div className="overflow-x-auto">
         <table className="min-w-full divide-gray-200 table-fixed rounded-lg dark:divide-gray-700 shadow my-4 border-collapse border border-slate-500 overflow-hidden">
           <thead className="bg-blue-600 dark:bg-gray-900">
             <tr>
@@ -84,6 +82,7 @@ function TableauStocks({ articles, handleAddArticle, handleUpdateArticle, handle
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {isAddModalOpen && (

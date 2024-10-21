@@ -6,6 +6,7 @@ const auth  = require("./routes/auth.js");
 const stockRoutes = require("./routes/stockRoutes.js");
 const entreeRoutes = require("./routes/entreeRoutes.js");
 const sortieRoutes = require("./routes/sortieRoutes.js");
+const exterieurRoutes = require("./routes/exterieurRoutes.js");
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ app.use('/api/auth', auth);
 app.use('/api/stocks', stockRoutes);
 app.use('/api/entrees', entreeRoutes);
 app.use('/api/sorties', sortieRoutes);
+app.use('/api/exterieurs', exterieurRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

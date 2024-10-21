@@ -12,25 +12,28 @@ router.post('/addSortie', async (req, res) => {
         if (!article) {
             return res.status(404).json({ message: 'Article not found' });
         }
+        
+        if (Number(article.quantite) >= Number(quantite)) {
+            const updatedQuantite = Number(article.quantite) - Number(quantite);
+            await Stock.update(
+                { quantite: updatedQuantite },
+                { where: { ref_article } }
+            );
+            const newSortie = await Sortie.create({
+                ref_article,
+                quantite,
+                nom_recepteur,
+                ...(date_sortie && { date_sortie })
+            });
+    
+            return res.status(201).json({
+                message: 'Exit added and stock updated successfully',
+                entree: newSortie
+            });
+        } else {
+            console.error("stock insuffisant");
+        }
 
-        const updatedQuantite = Number(article.quantite) - Number(quantite);
-
-        await Stock.update(
-            { quantite: updatedQuantite },
-            { where: { ref_article } }
-        );
-
-        const newSortie = await Sortie.create({
-            ref_article,
-            quantite,
-            nom_recepteur,
-            ...(date_sortie && { date_sortie })
-        });
-
-        return res.status(201).json({
-            message: 'Exit added and stock updated successfully',
-            entree: newSortie
-        });
 
     } catch (error) {
         console.error("Erreur lors de l'ajout :", error);

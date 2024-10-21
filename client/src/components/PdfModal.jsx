@@ -1,15 +1,12 @@
-import React, { useState } from "react";
-import { jsPDF } from "jspdf";
+import React, { useState, useEffect } from "react";
 import { format, subMonths } from "date-fns";
+import ExportToExcel from "./ExportToExcel";
+import ExportToPdf from "./ExportToPdf";
+import { getEntree } from "../services/entreeApi";
+import { getArticle } from "../services/articleApi";
+import { getSortie } from "../services/sortieApi";
 
 function PdfModal({ onExit }) {
-  const generatePDF = () => {
-    const doc = new jsPDF();
-
-    doc.text("Hello World!", 10, 10);
-    doc.save("document.pdf");
-    notify();
-  };
   const [selected, setSelected] = useState(0);
 
   const handleSelect = (index) => {
@@ -17,6 +14,70 @@ function PdfModal({ onExit }) {
   };
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [entrees, setEntrees] = useState([]);
+  const [sorties, setSorties] = useState([]);
+  const [generateExcel, setGenerateExcel] = useState(false);
+  const [generatePdf, setGeneratePdf] = useState(false);
+
+  const [articles, setArticles] = useState([]);
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const data = await getArticle();
+        setArticles(data);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des articles", err);
+      }
+    };
+
+    fetchArticles();
+  }, []);
+
+  // Fetch Entrées
+  useEffect(() => {
+    const fetchEntrees = async () => {
+      try {
+        const data = await getEntree();
+        const enrichedEntrees = data.map((entree) => {
+          const article = articles.find(
+            (article) => article.ref_article === entree.ref_article
+          );
+          return {
+            ...entree,
+            designation: article ? article.designation : "Inconnu",
+          };
+        });
+        setEntrees(enrichedEntrees);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des articles", err);
+      }
+    };
+
+    fetchEntrees();
+  }, [articles]);
+
+  // Fetch Sorties
+  useEffect(() => {
+    const fetchSorties = async () => {
+      try {
+        const data = await getSortie();
+        const enrichedSorties = data.map((sortie) => {
+          const article = articles.find(
+            (article) => article.ref_article === sortie.ref_article
+          );
+          return {
+            ...sortie,
+            designation: article ? article.designation : "Inconnu",
+          };
+        });
+        setSorties(enrichedSorties);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des articles", err);
+      }
+    };
+
+    fetchSorties();
+  }, [articles]);
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
@@ -35,6 +96,33 @@ function PdfModal({ onExit }) {
     return months;
   };
 
+  // Filter data based on the selected option and month
+  const filteredData =
+    selected === 0
+      ? selectedOption === "autre_mois" && selectedMonth
+        ? entrees.filter(
+            (entree) =>
+              format(new Date(entree.date_entree), "MMMM yyyy") ===
+              selectedMonth
+          )
+        : entrees
+      : selectedOption === "autre_mois" && selectedMonth
+      ? sorties.filter(
+          (sortie) =>
+            format(new Date(sortie.date_sortie), "MMMM yyyy") === selectedMonth
+        )
+      : sorties;
+
+  //const handleGenerate = () => {
+  //  console.log("Données filtrées : ", filteredData);
+  //  if (generateExcel) {
+  //    return <ExportToExcel data={sampleData} />;
+  //  }
+  //  if (generatePdf) {
+  //    return <ExportToPdf data={filteredData} />;
+  //  }
+  //};
+
   return (
     <>
       <div
@@ -50,10 +138,10 @@ function PdfModal({ onExit }) {
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl">
-              <h1 className="font-semibold text-lg px-6 pt-4">
-                Rapport de gestion
+              <h1 className="font-semibold text-lg px-8 my-4">
+                Rapport de gestion :
               </h1>
-              <div className="bg-gray-100 mt-8 shadow-lg shadow-blue-600 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div className="bg-gray-100 shadow-lg shadow-blue-600 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                 <div className="relative flex bg-gray-200 p-2 rounded-lg w-full max-w-md">
                   <div
                     className="absolute top-0 left-0 h-full bg-blue-500 rounded-lg transition-all duration-300"
@@ -133,8 +221,7 @@ function PdfModal({ onExit }) {
                   </form>
                   {selectedOption === "autre_mois" && (
                     <div className="mt-4">
-                      <label htmlFor="month" className="block mb-2">
-                      </label>
+                      <label htmlFor="month" className="block mb-2"></label>
                       <select
                         id="month"
                         name="month"
@@ -152,19 +239,23 @@ function PdfModal({ onExit }) {
                     </div>
                   )}
                 </div>
+                <div className="my-8">
+                <form action="" className="flex space-x-12">
+                    <label htmlFor="excel" className="inline-flex items-center">
+                      <ExportToExcel data={filteredData} />
+                    </label>
+                    <label htmlFor="pdf" className="inline-flex items-center">
+                      <ExportToPdf data={filteredData} />
+                    </label>
+                  </form>
+                </div>
                 <div className="mt-6 flex items-center justify-end gap-x-6">
                   <button
                     type="button"
-                    className="text-sm font-semibold leading-6 text-gray-900"
+                    className="text-sm font-bold leading-6 text-gray-900"
                     onClick={onExit}
                   >
                     retour
-                  </button>
-                  <button
-                    className="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={generatePDF}
-                  >
-                    generer
                   </button>
                 </div>
               </div>

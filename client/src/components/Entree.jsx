@@ -5,12 +5,6 @@ import { createEntree, getEntree } from "../services/entreeApi";
 import { getArticle } from "../services/articleApi";
 
 function Entree() {
-  const [dataCategory, setDataCategory] = useState([
-    { idCateg: 1, libelle: "Materiels" },
-    { idCateg: 2, libelle: "Fournitures" },
-    { idCateg: 3, libelle: "Accessoires" },
-    { idCateg: 4, libelle: "Equipements" },
-  ]);
 
   const [entreeData, setEntreeData] = useState({
     ref_article: "",
@@ -32,9 +26,12 @@ function Entree() {
       quantite: entreeData.quantite,
       ref_facture: entreeData.ref_facture,
       date_entree: entreeData.date_entree,
-      designation: articles.find(article => article.ref_article === entreeData.ref_article)?.designation || 'Inconnu'
+      designation:
+        articles.find(
+          (article) => article.ref_article === entreeData.ref_article
+        )?.designation || "Inconnu",
     };
-    setEntrees(prevEntrees => [...prevEntrees, newEntry]);
+    setEntrees((prevEntrees) => [...prevEntrees, newEntry]);
     setEntreeData({
       ref_article: "",
       quantite: "",
@@ -244,7 +241,7 @@ function Entree() {
               </button>
               <button
                 type="submit"
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Confirmer
               </button>
@@ -252,7 +249,7 @@ function Entree() {
           </form>
           <div className="shadow px-4 rounded py-4">
             <h6 className="text-base font-bold text-center">
-              Statistiques des entrées par catégorie
+              Statistiques mensuelles des stocks entrées
             </h6>
             <BarChart
               series={[
@@ -264,12 +261,7 @@ function Entree() {
               height={290}
               xAxis={[
                 {
-                  data: [
-                    "Matériels",
-                    "Fournitures",
-                    "Accessoires",
-                    "Equipements",
-                  ],
+                  data: ["Janvier", "Fevrier", "Mars", "Avril"],
                   scaleType: "band",
                 },
               ]}
@@ -279,32 +271,41 @@ function Entree() {
               <h6 className="text-base font-bold text-center">
                 Historiques des entrées
               </h6>
-              <table className="min-w-full my-4 divide-gray-100 table-fixed dark:divide-gray-100">
-                <thead>
-                  <tr>
-                    <th className="text-left text-sm">Désignation</th>
-                    <th className="text-left text-sm">Quantité</th>
-                    <th className="text-left text-sm">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {entrees.length > 0 ? (
-                    entrees.map((entree) => (
-                      <tr key={entree.ref_facture}>
-                        <td className="text-sm">{entree.designation}</td>
-                        <td className="text-sm">{entree.quantite}</td>
-                        <td className="text-sm">{new Date(entree.date_entree).toLocaleDateString()}</td>
-                      </tr>
-                    ))
-                    ) : (
+              <div className="h-64 overflow-y-auto">
+                <table className="min-w-full my-4 divide-gray-100 table-fixed dark:divide-gray-100">
+                  <thead>
                     <tr>
-                      <td colSpan="3" className="text-center text-sm">
-                        Aucune entrée trouvée.
-                      </td>
+                      <th className="text-center text-sm">Désignation</th>
+                      <th className="text-center text-sm">Quantité</th>
+                      <th className="text-center text-sm">Date</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {entrees.length > 0 ? (
+                      entrees.map((entree) => (
+                        <tr key={entree.ref_facture}>
+                          <td className="text-center text-sm">{entree.designation}</td>
+                          <td className="text-center text-sm">{entree.quantite}</td>
+                          <td className="text-center text-sm">
+                            {new Date(entree.date_entree).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" className="text-center text-sm">
+                          Aucune entrée trouvée.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mt-6 flex items-center justify-end gap-x-6">
+                <button className="text-blue-500 text-base rounded px-2 py-1">
+                  Voir plus
+                </button>
+              </div>
             </div>
           </div>
         </div>

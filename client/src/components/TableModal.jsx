@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { editArticle } from "../services/articleApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import QRCode from "qrcode";
 
 function TableModal({ article, onClose, onUpdateArticle }) {
   const [editableArticle, setEditableArticle] = useState(article);
+  const [qrCodeValue, setQrCodeValue] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,35 +18,55 @@ function TableModal({ article, onClose, onUpdateArticle }) {
 
   const successNotify = () => {
     toast.success("modification réussi!", {
-      position: "top-center",
-      autoClose: 1500
+      position: "bottom-center",
+      autoClose: 1500,
     });
   };
 
   const errorNotify = () => {
     toast.error("erreur de la modification!", {
-      position: "top-center",
-      autoClose: 1500
+      position: "bottom-center",
+      autoClose: 1500,
     });
   };
 
   const handleUpdateArticle = async () => {
     try {
-      const response = await editArticle(editableArticle.ref_article, editableArticle);
+      const response = await editArticle(
+        editableArticle.ref_article,
+        editableArticle
+      );
       await onUpdateArticle(editableArticle);
-      if (response.status === 200 || response.data.success) {
+      if (
+        response.status === 200 ||
+        response.status === 201 ||
+        response.data.success
+      ) {
         successNotify();
-        onClose();
       } else {
         errorNotify();
       }
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'article :", error);
     }
+    setTimeout(() => {
+      onClose();
+    }, 1000);
   };
 
   useEffect(() => {
     setEditableArticle(article);
+
+    if (article) {
+      const qrData = `${article.ref_article} - ${article.designation}`;
+      QRCode.toDataURL(qrData)
+        .then((url) => {
+          setQrCodeValue(url);
+        })
+        .catch((err) => {
+          console.error("Erreur lors de la génération du QR code :", err);
+        });
+    }
   }, [article]);
 
   return (
@@ -52,7 +74,9 @@ function TableModal({ article, onClose, onUpdateArticle }) {
       <div className="bg-white p-6 rounded-lg w-1/2 mt-8 flex flex-col">
         <div className="flex flex-grow">
           <div className="w-2/3">
-            <h2 className="text-xl font-bold mb-4 px-2 py-2">Détails de l'Article</h2>
+            <h2 className="text-xl font-bold mb-4 px-2 py-2">
+              Détails de l'Article
+            </h2>
             <table className="w-full">
               <tbody>
                 <tr>
@@ -165,13 +189,13 @@ function TableModal({ article, onClose, onUpdateArticle }) {
           </div>
 
           <div className="w-1/3 flex justify-center items-center">
-            {editableArticle.qr_code && (
+            {qrCodeValue && (
               <img
-                src={editableArticle.qr_code}
-                alt={`QR Code for ${editableArticle.designation}`}
+                src={qrCodeValue}
+                alt={`QR Code for ${editableArticle.ref_article} and ${editableArticle.designation}`}
                 className="max-w-full max-h-full"
               />
-            )}
+            )}{" "}
           </div>
         </div>
 

@@ -43,14 +43,14 @@ function NouveauModal({ onClose, onAddArticle }) {
 
   const successNotify = () => {
     toast.success("ajout réussi!", {
-      position: "top-center",
+      position: "bottom-center",
       autoClose: 1500,
     });
   };
 
   const errorNotify = () => {
     toast.error("erreur de l'ajout!", {
-      position: "top-center",
+      position: "bottom-center",
       autoClose: 1500,
     });
   };
@@ -71,10 +71,21 @@ function NouveauModal({ onClose, onAddArticle }) {
       qr_code: qrCodeUrl,
     };
 
+    setArticleData({
+      ref_article: "",
+      designation: "",
+      description: "",
+      quantite: "",
+      unite: "",
+      num_comptable: "",
+      ref_facture: "",
+      date: "",
+    });
+
     const response = await createArticle(newArticle);
     console.log("Réponse de l'API :", response);
 
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201 ||  response.data.success) {
       successNotify();
     } else {
       errorNotify();
@@ -86,8 +97,9 @@ function NouveauModal({ onClose, onAddArticle }) {
     } else {
       console.error("onAddArticle n'est pas une fonction");
     }
-
-    onClose();
+    setTimeout(() => {
+      onClose();
+    }, 1000);
   };
 
   const handleClickNouveau = (id) => {
