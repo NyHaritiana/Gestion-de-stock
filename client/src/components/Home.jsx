@@ -100,6 +100,12 @@ function Home() {
     }
   };
 
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
   const ExitNouveau = () => {
     setNouveauModal(false);
     setExterieurModal(false);
@@ -127,7 +133,10 @@ function Home() {
           >
             Gestion de Stock
           </a>
-          <p className="text-lg text-gray-200">
+          <p className="text-xl font-bold text-gray-200 uppercase">
+            Ministere des Forces Armees
+          </p>
+          <p className="text-lg text-gray-200 uppercase">
             Direction du Système d' Information
           </p>
         </div>

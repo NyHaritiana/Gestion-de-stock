@@ -3,7 +3,12 @@ import { AiFillDelete } from "react-icons/ai";
 import NouveauModal from "./NouveauModal";
 import TableModal from "./TableModal";
 
-function TableauStocks({ articles, handleAddArticle, handleUpdateArticle, handleDeleteArticle }) {
+function TableauStocks({
+  articles,
+  handleAddArticle,
+  handleUpdateArticle,
+  handleDeleteArticle,
+}) {
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
@@ -28,60 +33,77 @@ function TableauStocks({ articles, handleAddArticle, handleUpdateArticle, handle
   return (
     <>
       <div className="w-full mx-auto px-3">
+        <div className="flex flex-wrap justify-center w-full mx-auto mt-8 px-3">
+          <input type="text" name="design" id="deign" placeholder="Désignation" className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600" />
+          <select
+            id="num_comptable"
+            name="num_comptable"
+            className="max-w-full w-1/5 h-10 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+          >
+            <option>n° comptable</option>
+          </select>
+          <input type="date" name="date_i" id="date_i" className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600" />
+          <input type="date" name="date_f" id="date_f" className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600" />
+        </div>
         <div className="overflow-x-auto">
-        <table className="min-w-full divide-gray-200 table-fixed rounded-lg dark:divide-gray-700 shadow my-4 border-collapse border border-slate-500 overflow-hidden">
-          <thead className="bg-blue-600 dark:bg-gray-900">
-            <tr>
-              {datatablehead.map((item) => (
-                <th
-                  scope="col"
-                  className="py-6 px-4 text-xs font-bold tracking-wider text-center text-white uppercase dark:text-gray-400"
-                  key={item.idTablehead}
-                >
-                  {item.libelle}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {articles.length > 0 ? (
-              articles.map((article) => (
-                <tr
-                  key={article.ref_article}
-                  className="border border-slate-700"
-                  onClick={() => handleRowClick(article)}
-                >
-                  <td className="text-center py-4">{article.ref_article}</td>
-                  <td className="text-center py-4">{article.designation}</td>
-                  <td className="text-center py-4">{article.description}</td>
-                  <td className="text-center py-4">{article.quantite}</td>
-                  <td className="text-center py-4">{article.unite}</td>
-                  <td className="text-center py-4">{article.num_comptable}</td>
-                  <td className="text-center py-4">{article.ref_facture}</td>
-                  <td className="text-center py-4">{article.date}</td>
-                  <td className="text-center py-4">
-                    <div className="flex justify-center items-center">
-                      <AiFillDelete
-                        className="text-red-600 cursor-pointer"
-                        size={20}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteArticle(article.ref_article);
-                        }}
-                      />
-                    </div>
+          <table className="min-w-full divide-gray-200 table-fixed rounded-lg dark:divide-gray-700 shadow my-4 border-collapse border border-slate-500 overflow-hidden">
+            <thead className="bg-blue-600 dark:bg-gray-900">
+              <tr>
+                {datatablehead.map((item) => (
+                  <th
+                    scope="col"
+                    className="py-6 px-4 text-xs font-bold tracking-wider text-center text-white uppercase dark:text-gray-400"
+                    key={item.idTablehead}
+                  >
+                    {item.libelle}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {articles.length > 0 ? (
+                articles.map((article) => (
+                  <tr
+                    key={article.ref_article}
+                    className="border border-slate-700"
+                    onClick={() => handleRowClick(article)}
+                  >
+                    <td className="text-center py-4">{article.ref_article}</td>
+                    <td className="text-center py-4">{article.designation}</td>
+                    <td className="text-center py-4">{article.description}</td>
+                    <td className="text-center py-4">{article.quantite}</td>
+                    <td className="text-center py-4">{article.unite}</td>
+                    <td className="text-center py-4">
+                      {article.num_comptable}
+                    </td>
+                    <td className="text-center py-4">{article.ref_facture}</td>
+                    <td className="text-center py-4">{article.date}</td>
+                    <td className="text-center py-4">
+                      <div className="flex justify-center items-center">
+                        <AiFillDelete
+                          className="text-red-600 cursor-pointer"
+                          size={20}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteArticle(article.ref_article);
+                          }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={datatablehead.length}
+                    className="text-center py-4"
+                  >
+                    Aucun article trouvé.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={datatablehead.length} className="text-center py-4">
-                  Aucun article trouvé.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 

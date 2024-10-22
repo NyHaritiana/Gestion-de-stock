@@ -3,9 +3,10 @@ import Navbar from "./Navbar";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { createEntree, getEntree } from "../services/entreeApi";
 import { getArticle } from "../services/articleApi";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function Entree() {
-
   const [entreeData, setEntreeData] = useState({
     ref_article: "",
     quantite: "",
@@ -45,12 +46,14 @@ function Entree() {
         ref_facture: entreeData.ref_facture,
         date_entree: entreeData.date_entree,
       });
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         const { token } = response.data;
         localStorage.setItem("authToken", token);
+        toast.success("Entrée crée avec succès")
       }
     } catch (error) {
       console.error("Authentication failed:", error);
+      toast.error("Échec de la création de l'entrée. Veuillez réessayer.");
     }
   };
 
@@ -95,6 +98,22 @@ function Entree() {
 
     fetchEntrees();
   }, [articles]);
+
+  const [quantitesParMois, setQuantitesParMois] = useState(Array(12).fill(0));
+
+  useEffect(() => {
+    if (entrees.length > 0) {
+      const quantitesMois = Array(12).fill(0); 
+
+      entrees.forEach((entree) => {
+        const date = new Date(entree.date_entree);
+        const mois = date.getMonth();
+        quantitesMois[mois] += Number(entree.quantite); 
+      });
+
+      setQuantitesParMois(quantitesMois);
+    }
+  }, [entrees]);
 
   return (
     <>
@@ -253,15 +272,25 @@ function Entree() {
             </h6>
             <BarChart
               series={[
-                { data: [35, 44, 24, 34] },
-                { data: [51, 6, 49, 30] },
-                { data: [15, 25, 30, 50] },
-                { data: [60, 50, 15, 25] },
+                { data: quantitesParMois },
               ]}
               height={290}
               xAxis={[
                 {
-                  data: ["Janvier", "Fevrier", "Mars", "Avril"],
+                  data: [
+                    "Jan",
+                    "Fev",
+                    "Mars",
+                    "Avr",
+                    "Mai",
+                    "Juin",
+                    "Juill",
+                    "Aout",
+                    "Sept",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                  ],
                   scaleType: "band",
                 },
               ]}
@@ -284,8 +313,12 @@ function Entree() {
                     {entrees.length > 0 ? (
                       entrees.map((entree) => (
                         <tr key={entree.ref_facture}>
-                          <td className="text-center text-sm">{entree.designation}</td>
-                          <td className="text-center text-sm">{entree.quantite}</td>
+                          <td className="text-center text-sm">
+                            {entree.designation}
+                          </td>
+                          <td className="text-center text-sm">
+                            {entree.quantite}
+                          </td>
                           <td className="text-center text-sm">
                             {new Date(entree.date_entree).toLocaleDateString()}
                           </td>
@@ -310,6 +343,7 @@ function Entree() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

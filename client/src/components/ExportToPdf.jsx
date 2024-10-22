@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";  // Ensure you're importing autoTable if needed
+import autoTable from "jspdf-autotable";  
 import { FaFilePdf } from 'react-icons/fa';
 import { toast } from "react-toastify"; 
 
@@ -16,9 +16,9 @@ const ExportToPdf = ({data}) => {
   
     const tableData = data.map((item, index) => [
       index + 1,
-      item.ref_article ? item.ref_article.trim() : "N/A",  // Fallback if undefined
-      item.nom_recepteur ? item.nom_recepteur.trim() : "N/A",  // Fallback if undefined
-      item.quantite ?? 0,  // Fallback if quantite is undefined or null
+      item.ref_article ? item.ref_article.trim() : "N/A",
+      item.nom_recepteur ? item.nom_recepteur.trim() : "N/A", 
+      item.quantite ?? 0, 
     ]);
   
     doc.autoTable({

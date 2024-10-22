@@ -11,10 +11,10 @@ const ExportToExcel = ({data}) => {
 
     const worksheet = XLSX.utils.json_to_sheet(data.map(item => ({
       id_sortie: item.id_sortie,
-      ref_article: item.ref_article ? item.ref_article.trim() : "N/A",  // Fallback if undefined
-      nom_recepteur: item.nom_recepteur ? item.nom_recepteur.trim() : "N/A",  // Fallback if undefined
-      quantite: item.quantite ?? 0,  // Fallback if quantite is undefined or null
-      date_sortie: item.date_sortie || "N/A",  // Fallback if date_sortie is undefined
+      ref_article: item.ref_article ? item.ref_article.trim() : "N/A",
+      nom_recepteur: item.nom_recepteur ? item.nom_recepteur.trim() : "N/A",
+      quantite: item.quantite ?? 0,  
+      date_sortie: item.date_sortie || "N/A", 
     })));
   
     const workbook = XLSX.utils.book_new();

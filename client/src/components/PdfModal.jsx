@@ -16,8 +16,8 @@ function PdfModal({ onExit }) {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [entrees, setEntrees] = useState([]);
   const [sorties, setSorties] = useState([]);
-  const [generateExcel, setGenerateExcel] = useState(false);
-  const [generatePdf, setGeneratePdf] = useState(false);
+  //const [generateExcel, setGenerateExcel] = useState(false);
+  //const [generatePdf, setGeneratePdf] = useState(false);
 
   const [articles, setArticles] = useState([]);
   useEffect(() => {

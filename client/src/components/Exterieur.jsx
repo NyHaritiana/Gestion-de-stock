@@ -107,7 +107,7 @@ function Exterieur({ onClose }) {
                   <h2 className="font-bold py-4 text-gray-700">Listage des affaires non rendu :</h2>
                   <table className="w-2/3 border-collapse">
                     <tbody>
-                      {exterieur.map((ext, index) => (
+                      {exterieur.map((ext) => (
                         <tr key={ext.num_affaire}>
                           <td className="p-4">{ext.design}</td>
                           <td>|</td>

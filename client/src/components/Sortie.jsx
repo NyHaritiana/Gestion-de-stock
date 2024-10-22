@@ -121,6 +121,22 @@ function Sortie() {
     fetchSorties();
   }, [articles]);
 
+  const [quantitesParMois, setQuantitesParMois] = useState(Array(12).fill(0));
+
+  useEffect(() => {
+    if (sorties.length > 0) {
+      const quantitesMois = Array(12).fill(0); 
+
+      sorties.forEach((sortie) => {
+        const date = new Date(sortie.date_sortie);
+        const mois = date.getMonth();
+        quantitesMois[mois] += Number(sortie.quantite); 
+      });
+
+      setQuantitesParMois(quantitesMois);
+    }
+  }, [sorties]);
+
   return (
     <>
       <Navbar />
@@ -281,15 +297,12 @@ function Sortie() {
             </h6>
             <BarChart
               series={[
-                { data: [35, 44, 24, 34] },
-                { data: [51, 6, 49, 30] },
-                { data: [15, 25, 30, 50] },
-                { data: [60, 50, 15, 25] },
+                { data: quantitesParMois }
               ]}
               height={290}
               xAxis={[
                 {
-                  data: ["Janvier", "Fevrier", "Mars", "Avril"],
+                  data: ["Jan", "Fev", "Mars", "Avr", "Mai", "Juin", "Juill", "Aout", "Sept", "Oct", "Nov", "Dec"],
                   scaleType: "band",
                 },
               ]}
