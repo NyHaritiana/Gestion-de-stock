@@ -49,8 +49,12 @@ function Home() {
   const [nouveauModal, setNouveauModal] = useState(false);
   const [pdfModal, setPdfModal] = useState(false);
   const [exterieurModal, setExterieurModal] = useState(false);
+  const [filterTable, setFilterTable] = useState(false);
 
   const handleClickNouveau = (id) => {
+    if (id === 2) {
+      setFilterTable(!filterTable);
+    }
     if (id === 3) {
       setExterieurModal(!exterieurModal);
     }
@@ -119,6 +123,47 @@ function Home() {
     fetchArticles();
   }, []);
 
+  const [searchDesignation, setSearchDesignation] = useState("");
+  const [filteredArticles, setFilteredArticles] = useState(articles);
+  const [selectedNumComptable, setSelectedNumComptable] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  console.log("Rendered searchDesignation:", searchDesignation);
+  useEffect(() => {
+    setFilteredArticles(
+      articles.filter((article) => {
+        const matchesDesignation = article.designation
+          .toLowerCase()
+          .includes(searchDesignation.toLowerCase());
+
+        const articleDate = new Date(article.date);
+        const isAfterStartDate = startDate
+          ? articleDate >= new Date(startDate)
+          : true;
+        const isBeforeEndDate = endDate
+          ? articleDate <= new Date(endDate)
+          : true;
+
+        const matchesNumComptable = selectedNumComptable
+          ? article.num_comptable === parseInt(selectedNumComptable, 10)
+          : true;
+
+        console.log(
+          `Evaluating article: ${article.num_comptable}, Matches: ${matchesNumComptable}`
+        );
+
+        return (
+          matchesDesignation &&
+          matchesNumComptable &&
+          isAfterStartDate &&
+          isBeforeEndDate
+        );
+      })
+    );
+    console.log("Selected Num Comptable:", selectedNumComptable);
+  }, [searchDesignation, selectedNumComptable, startDate, endDate, articles]);
+
   return (
     <>
       {/* ---------navbar------------ */}
@@ -142,32 +187,7 @@ function Home() {
         </div>
       </header>
 
-      {/* -------------navig----------- 
-      <nav className="w-full py-4 border-t border-b bg-gray-100">
-        <div className="w-full flex-grow sm:flex sm:items-center sm:w-auto">
-          <div className="w-full container mx-auto flex flex-col sm:flex-row sm:flex-wrap items-center justify-center text-sm font-bold uppercase mt-0 px-6 py-2">
-            <div className="scroll-container w-full flex flex-wrap justify-center">
-              {datatitle.map((item) => (
-                <a
-                  href="#"
-                  onClick={() => handleTitleClick(item.idTitle)}
-                  className={`scrollh hover:bg-gray-300 rounded py-2 px-4 mx-2 my-2 ${
-                    selectedArticle === item.idTitle ? "bg-gray-300" : ""
-                  }`}
-                  key={item.idTitle}
-                  aria-current={
-                    selectedArticle === item.idTitle ? "page" : undefined
-                  }
-                >
-                  {item.libelles}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </nav>
-
-       ----------article-------- */}
+      {/* -----------article-------- */}
       <div className="container mx-auto py-2">
         <section className="flex flex-wrap justify-center w-full mx-auto px-3">
           {dataarticle
@@ -185,7 +205,11 @@ function Home() {
                 key={items.idArticle}
                 onClick={() => handleClickNouveau(items.idArticle)}
               >
-                <div className={`flex justify-center items-center px-2 py-2 w-full ${ items.idArticle === 5 ? "sm:w-14 h-14" : "sm:w-16 h-16" }`}>
+                <div
+                  className={`flex justify-center items-center px-2 py-2 w-full ${
+                    items.idArticle === 5 ? "sm:w-14 h-14" : "sm:w-16 h-16"
+                  }`}
+                >
                   <img
                     src={items.image}
                     className="max-h-16 max-w-16 object-contain"
@@ -213,9 +237,60 @@ function Home() {
           {pdfModal && <PdfModal onExit={ExitPdf} />}
         </section>
 
-        {/* -------------tableau---------- */}
+        {/* ---------filtre------------- */}
+        { filterTable && <div className="flex flex-wrap justify-center w-full mx-auto mt-8 px-3">
+          <input
+            type="text"
+            name="designation"
+            id="designation"
+            placeholder="Désignation"
+            className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+            value={searchDesignation}
+            onChange={(e) => {
+              setSearchDesignation(e.target.value);
+              console.log("Recherche:", e.target.value);
+            }}
+            onKeyDown={() => console.log("Key pressed!")}
+          />
+          <select
+            id="num_comptable"
+            name="num_comptable"
+            className="max-w-full w-1/5 h-10 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+            value={selectedNumComptable}
+            onChange={(e) => setSelectedNumComptable(e.target.value)}
+          >
+            <option>n° comptable</option>
+            {articles.length > 0 ? (
+              articles.map((article) => (
+                <option key={article.ref_article} value={article.num_comptable}>
+                  {article.num_comptable}
+                </option>
+              ))
+            ) : (
+              <option disabled>Chargement des articles...</option>
+            )}
+          </select>
+          <input
+            type="date"
+            name="date_i"
+            id="date_i"
+            value={startDate}
+            className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <input
+            type="date"
+            name="date_f"
+            id="date_f"
+            className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div> }
+
+        {/* -----------tableau---------------- */}
         <TableauStocks
-          articles={articles}
+          articles={filteredArticles}
           handleAddArticle={handleAddArticle}
           handleUpdateArticle={handleUpdateArticle}
           handleDeleteArticle={handleDeleteArticle}

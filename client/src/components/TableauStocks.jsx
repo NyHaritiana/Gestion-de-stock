@@ -33,18 +33,6 @@ function TableauStocks({
   return (
     <>
       <div className="w-full mx-auto px-3">
-        <div className="flex flex-wrap justify-center w-full mx-auto mt-8 px-3">
-          <input type="text" name="design" id="deign" placeholder="Désignation" className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600" />
-          <select
-            id="num_comptable"
-            name="num_comptable"
-            className="max-w-full w-1/5 h-10 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-          >
-            <option>n° comptable</option>
-          </select>
-          <input type="date" name="date_i" id="date_i" className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600" />
-          <input type="date" name="date_f" id="date_f" className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600" />
-        </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-gray-200 table-fixed rounded-lg dark:divide-gray-700 shadow my-4 border-collapse border border-slate-500 overflow-hidden">
             <thead className="bg-blue-600 dark:bg-gray-900">
