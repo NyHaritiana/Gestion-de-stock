@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { createExterieur, deleteExterieur, getExterieur } from "../services/exterieurApi";
+import {
+  createExterieur,
+  deleteExterieur,
+  getExterieur,
+} from "../services/exterieurApi";
 
 function Exterieur({ onClose }) {
   const today = new Date();
-  const formatDate = today.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
+  const formatDate = today.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 
   const [extData, setExtData] = useState({
@@ -24,17 +28,17 @@ function Exterieur({ onClose }) {
     const newAffaire = {
       design: extData.design,
       date: new Date().toISOString(),
-  };
-    setExterieur((prevExterieur) => [...prevExterieur, newAffaire]);
-    setExtData({
-      design: "",
-      date: formatDate,
-    });
+    };
+
     try {
       const response = await createExterieur(newAffaire);
-      if (response.status === 200) {
-        const { token } = response.data;
-        localStorage.setItem("authToken", token);
+      if (response.status === 200 || response.status === 201) {
+        const createdAffaire = response.data;
+        setExterieur((prevExterieur) => [...prevExterieur, createdAffaire]);
+        setExtData({
+          design: "",
+          date: formatDate,
+        });
         fetchExterieur();
       }
     } catch (error) {
@@ -57,8 +61,8 @@ function Exterieur({ onClose }) {
     try {
       const response = await deleteExterieur(num_affaire);
       if (response.status === 200) {
-        setExterieur((prevExterieur) => 
-          prevExterieur.filter(ext => ext.num_affaire !== num_affaire)
+        setExterieur((prevExterieur) =>
+          prevExterieur.filter((ext) => ext.num_affaire !== num_affaire)
         );
         console.log("Affaire a ete bien supprimer");
       }
@@ -91,7 +95,9 @@ function Exterieur({ onClose }) {
               </h1>
               <div className="bg-gray-100 shadow-lg shadow-blue-600 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                 <div>
-                  <h2 className="font-bold py-4 text-gray-700">Décrire l'objet :</h2>
+                  <h2 className="font-bold py-4 text-gray-700">
+                    Décrire l'objet :
+                  </h2>
                   <input
                     type="text"
                     name="design"
@@ -100,22 +106,29 @@ function Exterieur({ onClose }) {
                     placeholder="Quantité, designation, ..."
                     className="px-2 py-2"
                   />
-                  <button onClick={handleAddDesign} className="bg-blue-500 font-semibold text-white rounded-md px-3 py-2 mx-4">
+                  <button
+                    onClick={handleAddDesign}
+                    className="bg-blue-500 font-semibold text-white rounded-md px-3 py-2 mx-4"
+                  >
                     Ajouter
                   </button>
 
-                  <h2 className="font-bold py-4 text-gray-700">Listage des affaires non rendu :</h2>
+                  <h2 className="font-bold py-4 text-gray-700">
+                    Listage des affaires non rendu :
+                  </h2>
                   <table className="w-2/3 border-collapse">
                     <tbody>
-                      {exterieur.map((ext) => (
-                        <tr key={ext.num_affaire}>
+                      {exterieur.map((ext, index) => (
+                        <tr key={ext.num_affaire || index}>
                           <td className="p-4">{ext.design}</td>
                           <td>|</td>
-                          <td className="p-4 text-center">{ext.date || formatDate}</td>
+                          <td className="p-4 text-center">{formatDate}</td>
                           <td>|</td>
                           <td className="p-4">
-                            <button 
-                              onClick={() => handleDeleteDesign(ext.num_affaire)}
+                            <button
+                              onClick={() =>
+                                handleDeleteDesign(ext.num_affaire)
+                              }
                               className="bg-green-500 text-white rounded-md px-4 py-2"
                             >
                               rendu

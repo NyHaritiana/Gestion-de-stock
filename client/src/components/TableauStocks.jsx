@@ -12,6 +12,8 @@ function TableauStocks({
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState(null);
 
   const [datatablehead, setDatahead] = useState([
     { idTablehead: 1, libelle: "Ref. Article" },
@@ -28,6 +30,18 @@ function TableauStocks({
   const handleRowClick = (article) => {
     setSelectedArticle(article);
     setIsTableModalOpen(true);
+  };
+
+  const confirmDelete = (article) => {
+    setArticleToDelete(article);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (articleToDelete) {
+      handleDeleteArticle(articleToDelete.ref_article);
+      setIsDeleteModalOpen(false);
+    }
   };
 
   return (
@@ -73,7 +87,7 @@ function TableauStocks({
                           size={20}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteArticle(article.ref_article);
+                            confirmDelete(article);
                           }}
                         />
                       </div>
@@ -107,6 +121,26 @@ function TableauStocks({
           onClose={() => setIsTableModalOpen(false)}
           onUpdateArticle={handleUpdateArticle}
         />
+      )}
+      {isDeleteModalOpen && (
+        <div className="text-center">
+          <h2 className="text-xl font-bold mb-4">Confirmation</h2>
+          <p>Êtes-vous sûr de vouloir supprimer cet article ?</p>
+          <div className="mt-4">
+            <button
+              className="bg-red-600 text-white px-4 py-2 rounded-md"
+              onClick={handleConfirmDelete}
+            >
+              Confirmer
+            </button>
+            <button
+              className="ml-2 bg-gray-400 text-white px-4 py-2 rounded-md"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
       )}
     </>
   );
