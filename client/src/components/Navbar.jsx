@@ -70,7 +70,7 @@ function Navbar() {
                   </p>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center text-sm bg-gray-800 p-2 rounded-lg mt-8 hover:bg-gray-900" // Utiliser flex pour le bouton
+                    className="flex items-center text-sm bg-gray-800 p-2 rounded-lg mt-8 hover:bg-gray-900"
                   >
                     <FaSignOutAlt className="mr-2" />{" "}
                     Déconnexion

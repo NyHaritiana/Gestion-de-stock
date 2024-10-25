@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import Navbar from "./Navbar";
 import "../App.css";
 import exterieur from "../assets/exterieur.png";
@@ -11,13 +13,6 @@ import PdfModal from "./PdfModal";
 import Exterieur from "./Exterieur";
 
 function Home() {
-  const [datatitle, setDatatitle] = useState([
-    { idTitle: 1, libelles: "Tous" },
-    { idTitle: 2, libelles: "Matériels" },
-    { idTitle: 3, libelles: "Fournitures" },
-    { idTitle: 4, libelles: "Accessoires" },
-    { idTitle: 5, libelles: "Équipements" },
-  ]);
   const [dataarticle, setDataarticle] = useState([
     {
       idArticle: 2,
@@ -42,10 +37,6 @@ function Home() {
 
   const [selectedArticle, setSelectedArticle] = useState(1);
 
-  const handleTitleClick = (idTitle) => {
-    setSelectedArticle(idTitle);
-  };
-
   const [nouveauModal, setNouveauModal] = useState(false);
   const [pdfModal, setPdfModal] = useState(false);
   const [exterieurModal, setExterieurModal] = useState(false);
@@ -66,10 +57,17 @@ function Home() {
     }
   };
 
+  const [isLoading, setIsLoading] = useState(true);
   const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 1000);
+  }, []);
+
   const fetchArticles = async () => {
     const articlesData = await getArticle();
     setArticles(articlesData);
+    setIsLoading(false);
   };
   const handleAddArticle = async (newArticle) => {
     console.log("Article ajouté au tableau :", newArticle);
@@ -167,66 +165,111 @@ function Home() {
   return (
     <>
       {/* ---------navbar------------ */}
-      <Navbar />
+      {isLoading ? (
+        <Skeleton count={1} height={30} style={{ margin: "10px 0" }} />
+      ) : (
+        <Navbar />
+      )}
 
       {/* -----------title----------- */}
-      <header className="w-full header-background">
+      <header className={`w-full ${isLoading ? "bg-gray-100" : "header-background"}`}>
         <div className="max-w-7xl mx-auto flex flex-col items-center py-20">
-          <a
-            className="font-bold text-gray-100 uppercase hover:text-gray-400 text-5xl"
-            href="#"
-          >
-            Gestion de Stock
-          </a>
-          <p className="text-xl font-bold text-gray-200 uppercase">
-            Ministere des Forces Armees
-          </p>
-          <p className="text-lg text-gray-200 uppercase">
-            Direction du Système d' Information
-          </p>
+          {isLoading ? (
+            <Skeleton
+              width={300}
+              height={40}
+              duration={1.5}
+              baseColor="#e2e8f0"
+              highlightColor="#e5e7eb "
+            />
+          ) : (
+            <a
+              className="font-bold text-gray-100 uppercase hover:text-gray-400 text-5xl"
+              href="#"
+            >
+              Gestion de Stock
+            </a>
+          )}
+          {isLoading ? (
+            <Skeleton
+              width={200}
+              height={15}
+              duration={1.5}
+              baseColor="#e2e8f0"
+              highlightColor="#e5e7eb "
+            />
+          ) : (
+            <p className="text-xl font-bold text-gray-200 uppercase">
+              Ministere des Forces Armees
+            </p>
+          )}
+          {isLoading ? (
+            <Skeleton
+              width={250}
+              height={15}
+              duration={1.5}
+              baseColor="#e2e8f0"
+              highlightColor="#e5e7eb "
+            />
+          ) : (
+            <p className="text-lg text-gray-200 uppercase">
+              Direction du Système d' Information
+            </p>
+          )}
         </div>
       </header>
 
       {/* -----------article-------- */}
       <div className="container mx-auto py-2">
         <section className="flex flex-wrap justify-center w-full mx-auto px-3">
-          {dataarticle
-            .filter((items) =>
-              selectedArticle === 1 ? true : items.idArticle === selectedArticle
-            )
-            .map((items) => (
-              <article
-                className={`flex flex-col sm:flex-row w-full sm:w-60 h-auto sm:h-16 shadow my-4 mx-2 sm:mx-8 rounded transform transition-transform duration-1000 hover:scale-105  
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col sm:flex-row w-full sm:w-60 h-auto sm:h-16 shadow my-4 mx-2 sm:mx-8 rounded bg-gray-300 animate-pulse"
+                ></div>
+              ))
+            : dataarticle
+                .filter((items) =>
+                  selectedArticle === 1
+                    ? true
+                    : items.idArticle === selectedArticle
+                )
+                .map((items) => (
+                  <article
+                    className={`flex flex-col sm:flex-row w-full sm:w-60 h-auto sm:h-16 shadow my-4 mx-2 sm:mx-8 rounded transform transition-transform duration-1000 hover:scale-105  
                 ${
                   items.idArticle === 2
                     ? "bg-gradient-to-tr from-blue-900 to-blue-400 text-white"
                     : "bg-gray-100"
                 }`}
-                key={items.idArticle}
-                onClick={() => handleClickNouveau(items.idArticle)}
-              >
-                <div
-                  className={`flex justify-center items-center px-2 py-2 w-full ${
-                    items.idArticle === 5 ? "sm:w-14 h-14" : "sm:w-16 h-16"
-                  }`}
-                >
-                  <img
-                    src={items.image}
-                    className="max-h-16 max-w-16 object-contain"
-                  />
-                </div>
-                <div className="flex justify-center items-center text-center sm:text-left">
-                  <a
-                    href="#"
-                    className={`text-sm font-bold uppercase ${
-                      items.idArticle === 2 ? "text-gray-200" : "text-blue-800"
-                    }`}
+                    key={items.idArticle}
+                    onClick={() => handleClickNouveau(items.idArticle)}
                   >
-                    {items.title}
-                  </a>
-                </div>
-              </article>
-            ))}
+                    <div
+                      className={`flex justify-center items-center px-2 py-2 w-full ${
+                        items.idArticle === 5 ? "sm:w-14 h-14" : "sm:w-16 h-16"
+                      }`}
+                    >
+                      <img
+                        src={items.image}
+                        className="max-h-16 max-w-16 object-contain"
+                      />
+                    </div>
+                    <div className="flex justify-center items-center text-center sm:text-left">
+                      <a
+                        href="#"
+                        className={`text-sm font-bold uppercase ${
+                          items.idArticle === 2
+                            ? "text-gray-200"
+                            : "text-blue-800"
+                        }`}
+                      >
+                        {items.title}
+                      </a>
+                    </div>
+                  </article>
+                ))}
           {exterieurModal && <Exterieur onClose={ExitNouveau} />}
           {nouveauModal && (
             <NouveauModal
@@ -238,82 +281,113 @@ function Home() {
         </section>
 
         {/* ---------filtre------------- */}
-        { filterTable && <div className="flex flex-wrap justify-center w-full mx-auto mt-8 px-3">
-          <input
-            type="text"
-            name="designation"
-            id="designation"
-            placeholder="Désignation"
-            className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-            value={searchDesignation}
-            onChange={(e) => {
-              setSearchDesignation(e.target.value);
-              console.log("Recherche:", e.target.value);
-            }}
-            onKeyDown={() => console.log("Key pressed!")}
-          />
-          <select
-            id="num_comptable"
-            name="num_comptable"
-            className="max-w-full w-1/5 h-10 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-            value={selectedNumComptable}
-            onChange={(e) => setSelectedNumComptable(e.target.value)}
-          >
-            <option>n° comptable</option>
-            {articles.length > 0 ? (
-              articles.map((article) => (
-                <option key={article.ref_article} value={article.num_comptable}>
-                  {article.num_comptable}
-                </option>
-              ))
-            ) : (
-              <option disabled>Chargement des articles...</option>
-            )}
-          </select>
-          <input
-            type="date"
-            name="date_i"
-            id="date_i"
-            value={startDate}
-            className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          <input
-            type="date"
-            name="date_f"
-            id="date_f"
-            className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
-        </div> }
+        {filterTable && (
+          <div className="flex flex-wrap justify-center w-full mx-auto mt-8 px-3">
+            <input
+              type="text"
+              name="designation"
+              id="designation"
+              placeholder="Désignation"
+              className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+              value={searchDesignation}
+              onChange={(e) => {
+                setSearchDesignation(e.target.value);
+                console.log("Recherche:", e.target.value);
+              }}
+              onKeyDown={() => console.log("Key pressed!")}
+            />
+            <select
+              id="num_comptable"
+              name="num_comptable"
+              className="max-w-full w-1/5 h-10 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+              value={selectedNumComptable}
+              onChange={(e) => setSelectedNumComptable(e.target.value)}
+            >
+              <option>n° comptable</option>
+              {articles.length > 0 ? (
+                articles.map((article) => (
+                  <option
+                    key={article.ref_article}
+                    value={article.num_comptable}
+                  >
+                    {article.num_comptable}
+                  </option>
+                ))
+              ) : (
+                <option disabled>Chargement des articles...</option>
+              )}
+            </select>
+            <input
+              type="date"
+              name="date_i"
+              id="date_i"
+              value={startDate}
+              className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <input
+              type="date"
+              name="date_f"
+              id="date_f"
+              className="max-w-full w-1/5 rounded-md mx-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+        )}
 
         {/* -----------tableau---------------- */}
-        <TableauStocks
-          articles={filteredArticles}
-          handleAddArticle={handleAddArticle}
-          handleUpdateArticle={handleUpdateArticle}
-          handleDeleteArticle={handleDeleteArticle}
-        />
+        {isLoading ? (
+          <Skeleton count={5} height={30} style={{ margin: "10px 0" }} />
+        ) : (
+          <TableauStocks
+            articles={filteredArticles}
+            handleAddArticle={handleAddArticle}
+            handleUpdateArticle={handleUpdateArticle}
+            handleDeleteArticle={handleDeleteArticle}
+          />
+        )}
       </div>
 
       <footer className="w-full border-t bg-white pb-12">
         <div className="w-full container mx-auto flex flex-col items-center">
-          <div className="flex flex-col md:flex-row text-center md:text-left md:justify-between py-6">
-            <a href="#" className="uppercase px-3">
-              About Us
-            </a>
-            <a href="#" className="uppercase px-3">
-              Privacy Policy
-            </a>
-            <a href="#" className="uppercase px-3">
-              Terms & Conditions
-            </a>
-            <a href="#" className="uppercase px-3">
-              Contact Us
-            </a>
-          </div>
-          <div className="uppercase pb-6">&copy; 2024 G-STOCK | MFA - DSI</div>
+          {isLoading ? (
+            <Skeleton
+              width={300}
+              height={20}
+              duration={1.5}
+              baseColor="#e2e8f0"
+              highlightColor="#f3f4f6"
+            />
+          ) : (
+            <div className="flex flex-col md:flex-row text-center md:text-left md:justify-between py-6">
+              <a href="#" className="uppercase px-3">
+                About Us
+              </a>
+              <a href="#" className="uppercase px-3">
+                Privacy Policy
+              </a>
+              <a href="#" className="uppercase px-3">
+                Terms & Conditions
+              </a>
+              <a href="#" className="uppercase px-3">
+                Contact Us
+              </a>
+            </div>
+          )}
+          {isLoading ? (
+            <Skeleton
+              width={200}
+              height={20}
+              duration={1.5}
+              baseColor="#e2e8f0"
+              highlightColor="#f3f4f6"
+            />
+          ) : (
+            <div className="uppercase pb-6">
+              &copy; 2024 G-STOCK | MFA - DSI
+            </div>
+          )}
         </div>
       </footer>
     </>

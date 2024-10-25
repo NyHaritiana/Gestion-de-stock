@@ -89,7 +89,7 @@ function Exterieur({ onClose }) {
         ></div>
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
           <div className="flex min-h-full items-end justify-center text-center sm:items-center sm:p-0">
-            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-4 sm:w-full sm:max-w-3xl">
+            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-4 sm:w-full sm:max-w-xl">
               <h1 className="font-semibold text-lg px-4 my-4">
                 Gestion des affaires exterieurs :
               </h1>

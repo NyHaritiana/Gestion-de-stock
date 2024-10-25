@@ -16,8 +16,6 @@ function PdfModal({ onExit }) {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [entrees, setEntrees] = useState([]);
   const [sorties, setSorties] = useState([]);
-  //const [generateExcel, setGenerateExcel] = useState(false);
-  //const [generatePdf, setGeneratePdf] = useState(false);
 
   const [articles, setArticles] = useState([]);
   useEffect(() => {
@@ -137,7 +135,7 @@ function PdfModal({ onExit }) {
         ></div>
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl">
+            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
               <h1 className="font-semibold text-lg px-8 my-4">
                 Rapport de gestion :
               </h1>

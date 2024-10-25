@@ -123,22 +123,33 @@ function TableauStocks({
         />
       )}
       {isDeleteModalOpen && (
-        <div className="text-center">
-          <h2 className="text-xl font-bold mb-4">Confirmation</h2>
-          <p>Êtes-vous sûr de vouloir supprimer cet article ?</p>
-          <div className="mt-4">
-            <button
-              className="bg-red-600 text-white px-4 py-2 rounded-md"
-              onClick={handleConfirmDelete}
-            >
-              Confirmer
-            </button>
-            <button
-              className="ml-2 bg-gray-400 text-white px-4 py-2 rounded-md"
-              onClick={() => setIsDeleteModalOpen(false)}
-            >
-              Annuler
-            </button>
+        <div
+          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          aria-hidden="true"
+        >
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <div className="relative transform overflow-hidden rounded-lg bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="text-center p-4">
+                  <h2 className="text-xl text-white font-bold mb-4">Confirmation</h2>
+                  <p className="text-white">Êtes-vous sûr de vouloir supprimer cet article ?</p>
+                  <div className="mt-4">
+                    <button
+                      className="bg-red-600 text-white px-4 py-2 rounded-md"
+                      onClick={handleConfirmDelete}
+                    >
+                      Confirmer
+                    </button>
+                    <button
+                      className="ml-2 bg-gray-400 text-white px-4 py-2 rounded-md"
+                      onClick={() => setIsDeleteModalOpen(false)}
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

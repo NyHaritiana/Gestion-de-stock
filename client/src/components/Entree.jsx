@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import Navbar from "./Navbar";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { createEntree, getEntree } from "../services/entreeApi";
 import { getArticle } from "../services/articleApi";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 function Entree() {
   const [entreeData, setEntreeData] = useState({
@@ -13,6 +15,11 @@ function Entree() {
     ref_facture: "",
     date_entree: "",
   });
+
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 1000);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,7 +56,7 @@ function Entree() {
       if (response.status === 200 || response.status === 201) {
         const { token } = response.data;
         localStorage.setItem("authToken", token);
-        toast.success("Entrée crée avec succès")
+        toast.success("Entrée crée avec succès");
       }
     } catch (error) {
       console.error("Authentication failed:", error);
@@ -103,12 +110,12 @@ function Entree() {
 
   useEffect(() => {
     if (entrees.length > 0) {
-      const quantitesMois = Array(12).fill(0); 
+      const quantitesMois = Array(12).fill(0);
 
       entrees.forEach((entree) => {
         const date = new Date(entree.date_entree);
         const mois = date.getMonth();
-        quantitesMois[mois] += Number(entree.quantite); 
+        quantitesMois[mois] += Number(entree.quantite);
       });
 
       setQuantitesParMois(quantitesMois);
@@ -117,20 +124,44 @@ function Entree() {
 
   return (
     <>
-      <Navbar />
+      {isLoading ? (
+        <Skeleton count={1} height={30} style={{ margin: "10px 0" }} />
+      ) : (
+        <Navbar />
+      )}
 
       {/* -----------title----------- */}
       <header className="w-full container mx-auto">
         <div className="flex flex-col items-center py-20">
-          <a
-            className="font-bold text-gray-800 uppercase hover:text-gray-700 text-5xl"
-            href="#"
-          >
-            Stock Entrée
-          </a>
-          <p className="text-lg text-gray-600">
-            Direction du Système d' Information
-          </p>
+          {isLoading ? (
+            <Skeleton
+              width={300}
+              height={40}
+              duration={1.5}
+              baseColor="#e2e8f0"
+              highlightColor="#e5e7eb "
+            />
+          ) : (
+            <a
+              className="font-bold text-gray-800 uppercase hover:text-gray-700 text-5xl"
+              href="#"
+            >
+              Stock Entrée
+            </a>
+          )}
+          {isLoading ? (
+            <Skeleton
+              width={200}
+              height={15}
+              duration={1.5}
+              baseColor="#e2e8f0"
+              highlightColor="#e5e7eb "
+            />
+          ) : (
+            <p className="text-lg text-gray-600">
+              Direction du Système d' Information
+            </p>
+          )}
         </div>
       </header>
 
@@ -148,98 +179,140 @@ function Entree() {
                 </a>
               </div>
               <div className="border-b border-gray-900/10 pb-12">
-                <div className="sm:col-span-4">
-                  <label
-                    htmlFor="ref_article"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Référence article
-                  </label>
-                  <div className="mt-2">
-                    <select
-                      id="ref_article"
-                      name="ref_article"
-                      value={entreeData.ref_article}
-                      onChange={handleSelectChange}
-                      className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                    >
-                      <option></option>
-                      {articles.length > 0 ? (
-                        articles.map((article) => (
-                          <option
-                            key={article.ref_article}
-                            value={article.ref_article}
-                          >
-                            {article.ref_article} - {article.designation}
-                          </option>
-                        ))
-                      ) : (
-                        <option disabled>Chargement des articles...</option>
-                      )}
-                    </select>
-                  </div>
-                </div>
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                {isLoading ? (
+                  <Skeleton
+                    width={300}
+                    height={40}
+                    duration={1.5}
+                    baseColor="#e2e8f0"
+                    highlightColor="#e5e7eb "
+                  />
+                ) : (
                   <div className="sm:col-span-4">
                     <label
-                      htmlFor="ref_facture"
+                      htmlFor="ref_article"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Référence facture
+                      Référence article
                     </label>
                     <div className="mt-2">
-                      <input
-                        type="text"
-                        name="ref_facture"
-                        id="ref_facture"
-                        autoComplete="ref_facture"
-                        onChange={handleChange}
-                        value={entreeData.ref_facture}
-                        className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        required
-                      />
+                      <select
+                        id="ref_article"
+                        name="ref_article"
+                        value={entreeData.ref_article}
+                        onChange={handleSelectChange}
+                        className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                      >
+                        <option></option>
+                        {articles.length > 0 ? (
+                          articles.map((article) => (
+                            <option
+                              key={article.ref_article}
+                              value={article.ref_article}
+                            >
+                              {article.ref_article} - {article.designation}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>Chargement des articles...</option>
+                        )}
+                      </select>
                     </div>
                   </div>
+                )}
 
-                  <div className="sm:col-span-2 sm:col-start-1">
-                    <label
-                      htmlFor="quantite"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Quantité
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="number"
-                        name="quantite"
-                        id="quantite"
-                        onChange={handleChange}
-                        value={entreeData.quantite}
-                        className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        required
-                      />
+                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  {isLoading ? (
+                    <Skeleton
+                      width={400}
+                      height={40}
+                      duration={1.5}
+                      baseColor="#e2e8f0"
+                      highlightColor="#e5e7eb "
+                    />
+                  ) : (
+                    <div className="sm:col-span-4">
+                      <label
+                        htmlFor="ref_facture"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Référence facture
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          name="ref_facture"
+                          id="ref_facture"
+                          autoComplete="ref_facture"
+                          onChange={handleChange}
+                          value={entreeData.ref_facture}
+                          className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="date_entree"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Date
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        id="date_entree"
-                        name="date_entree"
-                        type="date"
-                        autoComplete="date"
-                        onChange={handleChange}
-                        value={entreeData.date_entree}
-                        className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        required
-                      />
+                  )}
+
+                  {isLoading ? (
+                    <Skeleton
+                      width={150}
+                      height={40}
+                      duration={1.5}
+                      baseColor="#e2e8f0"
+                      highlightColor="#e5e7eb "
+                    />
+                  ) : (
+                    <div className="sm:col-span-2 sm:col-start-1">
+                      <label
+                        htmlFor="quantite"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Quantité
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          type="number"
+                          name="quantite"
+                          id="quantite"
+                          onChange={handleChange}
+                          value={entreeData.quantite}
+                          className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {isLoading ? (
+                    <Skeleton
+                      width={150}
+                      height={40}
+                      duration={1.5}
+                      baseColor="#e2e8f0"
+                      highlightColor="#e5e7eb "
+                    />
+                  ) : (
+                    <div className="sm:col-span-2">
+                      <label
+                        htmlFor="date_entree"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Date
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          id="date_entree"
+                          name="date_entree"
+                          type="date"
+                          autoComplete="date"
+                          onChange={handleChange}
+                          value={entreeData.date_entree}
+                          className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          required
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -270,69 +343,82 @@ function Entree() {
             <h6 className="text-base font-bold text-center">
               Statistiques mensuelles des stocks entrées
             </h6>
-            <BarChart
-              series={[
-                { data: quantitesParMois },
-              ]}
-              height={290}
-              xAxis={[
-                {
-                  data: [
-                    "Jan",
-                    "Fev",
-                    "Mars",
-                    "Avr",
-                    "Mai",
-                    "Juin",
-                    "Juill",
-                    "Aout",
-                    "Sept",
-                    "Oct",
-                    "Nov",
-                    "Dec",
-                  ],
-                  scaleType: "band",
-                },
-              ]}
-              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
-            />
+            {isLoading ? (
+              <Skeleton height={290} width="100%" />
+            ) : (
+              <BarChart
+                series={[{ data: quantitesParMois }]}
+                height={290}
+                xAxis={[
+                  {
+                    data: [
+                      "Jan",
+                      "Fev",
+                      "Mars",
+                      "Avr",
+                      "Mai",
+                      "Juin",
+                      "Juill",
+                      "Aout",
+                      "Sept",
+                      "Oct",
+                      "Nov",
+                      "Dec",
+                    ],
+                    scaleType: "band",
+                  },
+                ]}
+                margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
+              />
+            )}
+
             <div className="shadow px-2 rounded py-2 my-4">
               <h6 className="text-base font-bold text-center">
                 Historiques des entrées
               </h6>
               <div className="h-64 overflow-y-auto">
-                <table className="min-w-full my-4 divide-gray-100 table-fixed dark:divide-gray-100">
-                  <thead>
-                    <tr>
-                      <th className="text-center text-sm">Désignation</th>
-                      <th className="text-center text-sm">Quantité</th>
-                      <th className="text-center text-sm">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {entrees.length > 0 ? (
-                      entrees.map((entree) => (
-                        <tr key={entree.ref_facture}>
-                          <td className="text-center text-sm">
-                            {entree.designation}
-                          </td>
-                          <td className="text-center text-sm">
-                            {entree.quantite}
-                          </td>
-                          <td className="text-center text-sm">
-                            {new Date(entree.date_entree).toLocaleDateString()}
+                {isLoading ? (
+                  <Skeleton
+                    count={5}
+                    height={30}
+                    style={{ margin: "10px 0" }}
+                  />
+                ) : (
+                  <table className="min-w-full my-4 divide-gray-100 table-fixed dark:divide-gray-100">
+                    <thead>
+                      <tr>
+                        <th className="text-center text-sm">Désignation</th>
+                        <th className="text-center text-sm">Quantité</th>
+                        <th className="text-center text-sm">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {entrees.length > 0 ? (
+                        entrees.map((entree) => (
+                          <tr key={entree.ref_facture}>
+                            <td className="text-center text-sm">
+                              {entree.designation}
+                            </td>
+                            <td className="text-center text-sm">
+                              {entree.quantite}
+                            </td>
+                            <td className="text-center text-sm">
+                              {new Date(
+                                entree.date_entree
+                              ).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="3" className="text-center text-sm">
+                            Aucune entrée trouvée.
                           </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="3" className="text-center text-sm">
-                          Aucune entrée trouvée.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
               <div className="mt-6 flex items-center justify-end gap-x-6">
                 <button className="text-blue-500 text-base rounded px-2 py-1">
