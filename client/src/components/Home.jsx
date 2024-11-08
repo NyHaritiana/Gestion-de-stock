@@ -303,7 +303,7 @@ function Home() {
               value={selectedNumComptable}
               onChange={(e) => setSelectedNumComptable(e.target.value)}
             >
-              <option>n° comptable</option>
+              <option value="">tous les n° comptables</option>
               {articles.length > 0 ? (
                 articles.map((article) => (
                   <option

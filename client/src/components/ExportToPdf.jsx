@@ -34,7 +34,7 @@ const ExportToPdf = ({data}) => {
   return (
     <FaFilePdf
       onClick={generatePDF}
-      style={{ fontSize: '48px', cursor: 'pointer', color: 'red' }}
+      style={{ fontSize: '24px', cursor: 'pointer', color: 'white' }}
       title="Exporter vers Pdf"
     />
   );

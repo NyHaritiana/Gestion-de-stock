@@ -238,14 +238,7 @@ function PdfModal({ onExit }) {
                   )}
                 </div>
                 <div className="my-8">
-                <form action="" className="flex space-x-12">
-                    <label htmlFor="excel" className="inline-flex items-center">
-                      <ExportToExcel data={filteredData} />
-                    </label>
-                    <label htmlFor="pdf" className="inline-flex items-center">
-                      <ExportToPdf data={filteredData} />
-                    </label>
-                  </form>
+                  <form action="" className="flex space-x-12"></form>
                 </div>
                 <div className="mt-6 flex items-center justify-end gap-x-6">
                   <button
@@ -255,6 +248,16 @@ function PdfModal({ onExit }) {
                   >
                     retour
                   </button>
+                  <div className="bg-green-600 p-1 rounded-sm w-16 flex justify-center items-center">
+                    <label htmlFor="excel">
+                      <ExportToExcel data={filteredData} />
+                    </label>
+                  </div>
+                  <div className="bg-red-600 p-1 rounded-sm w-16 flex justify-center items-center">
+                    <label htmlFor="pdf">
+                      <ExportToPdf data={filteredData} />
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>

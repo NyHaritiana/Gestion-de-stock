@@ -26,7 +26,7 @@ const ExportToExcel = ({data}) => {
   return (
     <FaFileExcel
       onClick={handleExport}
-      style={{ fontSize: '48px', cursor: 'pointer', color: 'green' }}
+      style={{ fontSize: '24px', cursor: 'pointer', color: 'white' }}
       title="Exporter vers Excel"
     />
   );

@@ -15,7 +15,7 @@ const corsOption = {
 
 const defaultUser = {
   username: 'dsimfa@gmail.com',
-  password: '1234567890'
+  password: '123'
 };
 
 router.post('/login', async (req, res) => {
